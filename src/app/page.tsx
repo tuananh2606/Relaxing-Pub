@@ -2,13 +2,20 @@
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 const HeroPlayer = dynamic(() => import('~/components/player/HeroPlayer'), { ssr: false });
+import PreviewModal from '~/components/preview-modal/PreviewModal';
 
 export default function Home() {
-  const [isMuted, setVideoMuted] = useState(true);
+  const [isMuted, setVideoMuted] = useState<boolean>(true);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
 
   const playPauseHandler = () => {
     setVideoMuted(!isMuted);
   };
+
+  const openModalHandle = () => {
+    setIsOpenModal(true);
+  };
+
   return (
     <main>
       <div className="relative h-auto max-h-screen overflow-hidden">
@@ -30,7 +37,10 @@ export default function Home() {
               </span>
               <span className="ml-1 text-lg text-black">Play</span>
             </button>
-            <button className="flex items-center justify-center rounded-[4px] bg-secondary px-7 py-2 hover:bg-[rgba(109,109,110,0.4)] ">
+            <button
+              onClick={openModalHandle}
+              className="flex items-center justify-center rounded-[4px] bg-secondary px-7 py-2 hover:bg-[rgba(109,109,110,0.4)] "
+            >
               <span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 25" fill="none">
                   <path
@@ -63,6 +73,14 @@ export default function Home() {
           </button>
         </div>
       </div>
+      {isOpenModal && (
+        <div className="absolute top-0 z-20 flex h-full w-full justify-center">
+          <div className="absolute top-[2em] rounded-md">
+            <PreviewModal setIsOpenModal={setIsOpenModal} />
+          </div>
+        </div>
+      )}
+
       <div className="row h-96"></div>
     </main>
   );
