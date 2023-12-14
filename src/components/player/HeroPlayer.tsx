@@ -1,27 +1,33 @@
-'use client';
-import React from 'react';
-import ReactPlayer from 'react-player/youtube';
+import ReactPlayer from 'react-player/lazy';
+import VideoSkeleton from '../ui/skeleton/VideoSkeleton';
+import AspectRatio from '../shared/AspectRatio';
 
 interface IHeroPlayer {
+  url: string;
   isMuted: boolean;
+  playing: boolean;
 }
 
-const HeroPlayer = ({ isMuted }: IHeroPlayer) => {
+const HeroPlayer = ({ isMuted, url, playing }: IHeroPlayer) => {
   return (
-    <div className="relative pt-[56.25%]">
+    <AspectRatio ratio={16 / 9}>
       <ReactPlayer
-        className="pointer-events-none absolute left-0 top-0"
-        playing
+        className="pointer-events-none"
+        playing={playing}
+        volume={0.5}
         muted={isMuted}
-        loop
-        url="https://www.youtube.com/embed/Pm3lA3DKMGE"
+        url={`https://www.youtube.com/embed/${url}`}
         width="100%"
         height="100%"
+        fallback={<VideoSkeleton />}
+        onEnded={() => {}}
         config={{
-          playerVars: { disablekb: 1, rel: 1 },
+          youtube: {
+            playerVars: { disablekb: 1, rel: 1, cc_load_policy: 1 },
+          },
         }}
       />
-    </div>
+    </AspectRatio>
   );
 };
 
