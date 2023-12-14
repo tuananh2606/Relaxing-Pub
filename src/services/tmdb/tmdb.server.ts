@@ -26,9 +26,13 @@ import type {
   TimeWindowType,
 } from './tmdb.types';
 import { postFetchDataHandler, TMDB } from './utils.server';
-import useSWR from 'swr';
+
 // reusable function
-const getListFromTMDB = async (url: string, type?: 'movie' | 'tv' | 'people'): Promise<IMediaList> => {
+const getListFromTMDB = async (
+  url: string,
+  type?: 'movie' | 'tv' | 'people',
+  options?: object,
+): Promise<IMediaList> => {
   try {
     const fetched = await fetcher<{
       items?: IMedia[];
@@ -37,6 +41,7 @@ const getListFromTMDB = async (url: string, type?: 'movie' | 'tv' | 'people'): P
       total_results: number;
     }>({
       url,
+      options,
     });
     return {
       page: fetched.page,
@@ -95,7 +100,7 @@ export async function getTrending(
   // Inside, we call the `fetch` function with
   // a URL and config given:
   const url = TMDB.trendingUrl(mediaType, timeWindow, language, page);
-  return getListFromTMDB(url, mediaType === 'person' ? 'people' : undefined);
+  return getListFromTMDB(url, mediaType === 'person' ? 'people' : undefined, { next: { revalidate: 300 } });
 
   // We also can use some post-response
   // data-transformations in the last `then` clause.
