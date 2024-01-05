@@ -12,6 +12,7 @@
     "@consumet/extensions": "^1.5.4",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
     "artplayer": "^5.0.9",
+    "artplayer-plugin-hls-quality": "^2.0.0",
     "axios": "^1.6.2",
     "cloudscraper": "^4.6.0",
     "clsx": "^2.0.0",

@@ -1,3 +1,10 @@
 .imageWrapper {
   background-image: linear-gradient(0deg, #181818, transparent 50%);
 }
+.link {
+  &:not(:last-child) {
+    &::after {
+      content: ', ';
+    }
+  }
+}
