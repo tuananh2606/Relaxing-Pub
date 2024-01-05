@@ -1,9 +1,10 @@
-import Image from 'next/image';
+import { Dispatch, SetStateAction, Suspense } from 'react';
+import Link from 'next/link';
+
+import toHourAndMinutes from '~/utils/toHourAndMinutes';
 import styles from './preview-modal.module.scss';
-import { Dispatch, SetStateAction } from 'react';
 import { getCredits, getMovieDetail } from '~/services/tmdb/tmdb.server';
 import { ICredit, IMovieDetail, ITvShowDetail } from '~/services/tmdb/tmdb.types';
-import { Suspense } from 'react';
 import PreviewModalSkeleton from '../ui/skeleton/PreviewModalSkeleton';
 import ImageWithFallback from '../shared/ImageWithFallback';
 
@@ -24,12 +25,26 @@ interface IPreviewModal {
 
 const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) => {
   const { credits, details } = items;
+  const { cast } = credits ?? {};
+  const { genres } = details ?? {};
+
+  const someActors: (string | undefined)[] = [];
+  const someGenres: (string | undefined)[] = [];
+
+  cast?.forEach((ele) => {
+    someActors.push(ele.name);
+  });
+
+  genres?.forEach((ele) => {
+    someGenres.push(ele.name);
+  });
+
   const releaseYear = new Date(
     (details as IMovieDetail)?.release_date || (details as ITvShowDetail)?.first_air_date || '',
   ).getFullYear();
   const url = `${process.env.NEXT_PUBLIC_URL_IMAGES}/${details?.backdrop_path}`;
   return (
-    <div className="w-[850px] min-w-[850px] animate-scale-in-center rounded-md bg-[#181818]">
+    <div className="absolute top-[2em] mx-4 w-auto max-w-[850px] animate-scale-in-center rounded-md bg-[#181818] pb-9 md:mx-8">
       <div className="image-wrapper relative block w-full">
         <Suspense fallback={<PreviewModalSkeleton />}>
           <ImageWithFallback
@@ -52,7 +67,7 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
             setIsPlaying(true);
           }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 25" fill="none">
             <path
               d="M12.0007 10.9002L16.9504 5.95044L18.3646 7.36465L13.4149 12.3144L18.3646 17.2641L16.9504 18.6783L12.0007 13.7286L7.05093 18.6783L5.63672 17.2641L10.5865 12.3144L5.63672 7.36465L7.05093 5.95044L12.0007 10.9002Z"
               fill="white"
@@ -61,20 +76,33 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
         </button>
       </div>
       <div className="px-12 py-3">
-        <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-          <div className="">
+        <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-8">
+          <div>
             <span>{releaseYear}</span>
-            <span> ‧ Action/Sci-fi</span>
-            <span> ‧ 2h 20m</span>
-            <p className="mt-3">{details?.overview}</p>
+            <span> ‧ {toHourAndMinutes((details as IMovieDetail)?.runtime!)}</span>
+            <p className="mt-3 text-sm">{details?.overview}</p>
           </div>
           <div className="">
             <ul>
               <li>
-                <span className="text-sm text-[#777777]">Dien vien:</span>
+                <span className="text-sm text-[#777777]">Dien vien: </span>
+                {someActors?.slice(0, 3).map((ele, idx) => (
+                  <span key={idx} className={`${styles.link} text-sm`}>
+                    <Link href="#" className="hover:underline">
+                      {ele}
+                    </Link>
+                  </span>
+                ))}
               </li>
               <li>
-                <span className="text-sm text-[#777777]">The loai:</span>
+                <span className="text-sm text-[#777777]">The loai: </span>
+                {someGenres?.slice(0, 3).map((ele, idx) => (
+                  <span key={idx} className={`${styles.link} text-sm`}>
+                    <Link href="#" className="hover:underline">
+                      {ele}
+                    </Link>
+                  </span>
+                ))}
               </li>
             </ul>
           </div>

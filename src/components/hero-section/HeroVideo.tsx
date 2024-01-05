@@ -3,12 +3,13 @@ import { useState, useEffect } from 'react';
 import HeroPlayer from '../player/HeroPlayer';
 import PreviewModal from '../preview-modal/PreviewModal';
 import styles from './hero-video.module.scss';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { preload } from '../preview-modal/PreviewModal';
 import { IVideos, ICredit, IMovieDetail, ITvShowDetail } from '~/services/tmdb/tmdb.types';
 import { IAnimeInfo, IMovieInfo } from '@consumet/extensions';
 import { Suspense } from 'react';
 import PreviewModalSkeleton from '../ui/skeleton/PreviewModalSkeleton';
+import Link from 'next/link';
 
 interface IHeroVideo {
   items: {
@@ -54,7 +55,7 @@ const HeroVideo = ({ items }: IHeroVideo) => {
     setIsPlaying(false);
   };
   const navigate = () => {
-    if (idMedia) router.push(`/watch?id=${idMedia.id}&episodeId=${idMedia.episodeId}`);
+    // if (idMedia) redirect(`/watch?id=${idMedia.id}&episodeId=${idMedia.episodeId}`);
   };
 
   // preload(items?.id as number, items?.mediaType);
@@ -65,29 +66,32 @@ const HeroVideo = ({ items }: IHeroVideo) => {
       {isOpenModal && (
         <div className="previewMpdel-backdrop fixed inset-0 z-30 h-full w-full bg-black opacity-70"></div>
       )}
-      <div className="absolute bottom-[10%] left-[5%] flex w-[36%] flex-col justify-end">
-        <h1 className=" text-2xl drop-shadow-xl">{title}</h1>
-        <div className="mt-[1.5vw] animate-fade-bottom text-lg drop-shadow-xl">
+      <div className="absolute bottom-[10%] left-[5%] flex w-[60%] flex-col justify-end md:w-[36%]">
+        <h1 className=" text-base drop-shadow-xl md:text-2xl">{title}</h1>
+        <div className="mt-[1.5vw] animate-fade-bottom text-sm drop-shadow-xl md:text-lg">
           <div className="overflow-hidden">{details?.overview}</div>
         </div>
         <div className="actions-btn mt-[1.5vw] flex items-center">
-          <button
-            onClick={navigate}
-            className="mr-3 flex items-center justify-center rounded-[4px] bg-white px-7 py-2 transition hover:bg-[rgba(255,255,255,0.75)]"
-          >
-            <span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M19.376 12.4158L8.77735 19.4816C8.54759 19.6348 8.23715 19.5727 8.08397 19.3429C8.02922 19.2608 8 19.1643 8 19.0656V4.93408C8 4.65794 8.22386 4.43408 8.5 4.43408C8.59871 4.43408 8.69522 4.4633 8.77735 4.51806L19.376 11.5838C19.6057 11.737 19.6678 12.0474 19.5146 12.2772C19.478 12.3321 19.4309 12.3792 19.376 12.4158Z"
-                  fill="black"
-                />
-              </svg>
-            </span>
-            <span className="ml-1 text-lg text-black">Play</span>
-          </button>
+          <Link href={`/watch?id=${idMedia?.id}&episodeId=${idMedia?.episodeId}`}>
+            <button
+              onClick={navigate}
+              className="mr-3 flex items-center justify-center rounded-[4px] bg-white px-2 py-2 transition hover:bg-[rgba(255,255,255,0.75)] md:px-7"
+            >
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M19.376 12.4158L8.77735 19.4816C8.54759 19.6348 8.23715 19.5727 8.08397 19.3429C8.02922 19.2608 8 19.1643 8 19.0656V4.93408C8 4.65794 8.22386 4.43408 8.5 4.43408C8.59871 4.43408 8.69522 4.4633 8.77735 4.51806L19.376 11.5838C19.6057 11.737 19.6678 12.0474 19.5146 12.2772C19.478 12.3321 19.4309 12.3792 19.376 12.4158Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+              <span className="ml-1 text-sm text-black md:text-lg">Play</span>
+            </button>
+          </Link>
+
           <button
             onClick={openModalHandle}
-            className="flex items-center justify-center rounded-[4px] bg-secondary px-7 py-2 transition hover:bg-[rgba(109,109,110,0.4)] "
+            className="flex min-w-fit items-center justify-center rounded-[4px] bg-secondary px-2 py-2 transition hover:bg-[rgba(109,109,110,0.4)] md:px-7 "
           >
             <span>
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 25" fill="none">
@@ -97,7 +101,7 @@ const HeroVideo = ({ items }: IHeroVideo) => {
                 />
               </svg>
             </span>
-            <span className="ml-1 text-lg text-white">Thông tin khác</span>
+            <span className="ml-1 text-sm text-white md:text-lg">Thông tin khác</span>
           </button>
         </div>
       </div>
@@ -122,14 +126,12 @@ const HeroVideo = ({ items }: IHeroVideo) => {
         </button>
       </div>
       {isOpenModal && (
-        <div className="absolute top-0 z-40 flex h-full w-full justify-center">
-          <div className="absolute top-[2em] rounded-md">
-            <PreviewModal
-              items={{ credits: credits, details: details }}
-              setIsOpenModal={setIsOpenModal}
-              setIsPlaying={setIsPlaying}
-            />
-          </div>
+        <div className="absolute left-0 top-0 z-40 flex h-full w-full justify-center">
+          <PreviewModal
+            items={{ credits: credits, details: details }}
+            setIsOpenModal={setIsOpenModal}
+            setIsPlaying={setIsPlaying}
+          />
         </div>
       )}
     </div>
