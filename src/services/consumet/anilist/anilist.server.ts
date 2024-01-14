@@ -16,40 +16,40 @@ const generateAnilistMeta = (provider?: string) => {
   return new META.Anilist();
 };
 
-export const getAnimeSearch = async (
-  query: string,
-  page?: number,
-  perPage?: number,
-): Promise<IAnimeList | undefined> => {
-  const anilist = generateAnilistMeta();
-  const results = await cachified({
-    key: `anilist-search-${query}-${page}-${perPage}`,
-    ttl: 1000 * 60 * 60,
-    staleWhileRevalidate: 1000 * 60 * 60 * 24,
-    cache: lruCache,
-    request: undefined,
-    getFreshValue: async () => {
-      try {
-        const res = await anilist.search(query, page, perPage);
-        return res;
-      } catch (error) {
-        console.error(error);
-        return {
-          currentPage: 0,
-          hasNextPage: false,
-          results: [],
-        };
-      }
-    },
-  });
-  return {
-    currentPage: results?.currentPage || 0,
-    hasNextPage: results?.hasNextPage || false,
-    results: [...fetchAnimeResultsHandler(results.results as IAnimeResult[])],
-    ...(results.totalPages && { totalPages: results.totalPages }),
-    ...(results.totalResults && { totalResults: results.totalResults }),
-  };
-};
+// export const getAnimeSearch = async (
+//   query: string,
+//   page?: number,
+//   perPage?: number,
+// ): Promise<IAnimeList | undefined> => {
+//   const anilist = generateAnilistMeta();
+//   const results = await cachified({
+//     key: `anilist-search-${query}-${page}-${perPage}`,
+//     ttl: 1000 * 60 * 60,
+//     staleWhileRevalidate: 1000 * 60 * 60 * 24,
+//     cache: lruCache,
+//     request: undefined,
+//     getFreshValue: async () => {
+//       try {
+//         const res = await anilist.search(query, page, perPage);
+//         return res;
+//       } catch (error) {
+//         console.error(error);
+//         return {
+//           currentPage: 0,
+//           hasNextPage: false,
+//           results: [],
+//         };
+//       }
+//     },
+//   });
+//   return {
+//     currentPage: results?.currentPage || 0,
+//     hasNextPage: results?.hasNextPage || false,
+//     results: [...fetchAnimeResultsHandler(results.results as IAnimeResult[])],
+//     ...(results.totalPages && { totalPages: results.totalPages }),
+//     ...(results.totalResults && { totalResults: results.totalResults }),
+//   };
+// };
 
 export const getAnimeRecentEpisodes = async (
   provider?: 'gogoanime' | 'zoro' | undefined,
@@ -57,33 +57,19 @@ export const getAnimeRecentEpisodes = async (
   perPage?: number,
 ): Promise<IAnimeList | undefined> => {
   const anilist = generateAnilistMeta(provider);
-  const results = await cachified({
-    key: `anilist-recent-episodes-${page}-${perPage}-${provider}`,
-    ttl: 1000 * 60 * 60 * 24,
-    staleWhileRevalidate: 1000 * 60 * 60 * 24 * 7,
-    cache: lruCache,
-    request: undefined,
-    getFreshValue: async () => {
-      try {
-        const res = await anilist.fetchRecentEpisodes(provider, page, perPage);
-        return res;
-      } catch (error) {
-        console.error(error);
-        return {
-          currentPage: 0,
-          hasNextPage: false,
-          results: [],
-        };
-      }
-    },
-  });
-  return {
-    currentPage: results?.currentPage || 0,
-    hasNextPage: results?.hasNextPage || false,
-    results: [...fetchAnimeEpisodeHandler(results.results as IAnimeResult[])],
-    ...(results.totalPages && { totalPages: results.totalPages }),
-    ...(results.totalResults && { totalResults: results.totalResults }),
-  };
+  try {
+    const res = await anilist.fetchRecentEpisodes(provider, page, perPage);
+    return {
+      currentPage: res?.currentPage || 0,
+      hasNextPage: res?.hasNextPage || false,
+      results: [...fetchAnimeEpisodeHandler(res.results as IAnimeResult[])],
+      ...(res.totalPages && { totalPages: res.totalPages }),
+      ...(res.totalResults && { totalResults: res.totalResults }),
+    };
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 };
 
 export const getAnimeAdvancedSearch = async (
@@ -101,45 +87,31 @@ export const getAnimeAdvancedSearch = async (
 ): Promise<IAnimeList | undefined> => {
   console.log('🚀 ~ file: anilist.server.ts:104 ~ sort:', sort);
   const anilist = generateAnilistMeta();
-  const results = await cachified({
-    key: `anilist-advanced-search-${query}-${type}-${page}-${perPage}-${season}-${format}-${sort}-${genres}-${id}-${year}-${status}`,
-    ttl: 1000 * 60 * 60 * 4,
-    staleWhileRevalidate: 1000 * 60 * 60 * 24 * 2,
-    cache: lruCache,
-    request: undefined,
-    getFreshValue: async () => {
-      try {
-        const res = await anilist.advancedSearch(
-          query,
-          type,
-          page,
-          perPage,
-          format,
-          sort,
-          genres,
-          id,
-          year,
-          status,
-          season,
-        );
-        return res;
-      } catch (error) {
-        console.error(error);
-        return {
-          currentPage: 0,
-          hasNextPage: false,
-          results: [],
-        };
-      }
-    },
-  });
-  return {
-    currentPage: results?.currentPage || 0,
-    hasNextPage: results?.hasNextPage || false,
-    results: [...fetchAnimeResultsHandler(results.results as IAnimeResult[])],
-    ...(results.totalPages && { totalPages: results.totalPages }),
-    ...(results.totalResults && { totalResults: results.totalResults }),
-  };
+  try {
+    const res = await anilist.advancedSearch(
+      query,
+      type,
+      page,
+      perPage,
+      format,
+      sort,
+      genres,
+      id,
+      year,
+      status,
+      season,
+    );
+    return {
+      currentPage: res?.currentPage || 0,
+      hasNextPage: res?.hasNextPage || false,
+      results: [...fetchAnimeEpisodeHandler(res.results as IAnimeResult[])],
+      ...(res.totalPages && { totalPages: res.totalPages }),
+      ...(res.totalResults && { totalResults: res.totalResults }),
+    };
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 };
 
 export const getAnimeRandom = async (): Promise<IAnimeInfo | undefined> => {
@@ -158,161 +130,133 @@ export const getAnimeRandom = async (): Promise<IAnimeInfo | undefined> => {
 
 export const getAnimeTrending = async (page?: number, perPage?: number): Promise<IAnimeList | undefined> => {
   const anilist = generateAnilistMeta();
-  const results = await cachified({
-    key: `anilist-trending-${page}-${perPage}`,
-    ttl: 1000 * 60 * 60 * 24,
-    staleWhileRevalidate: 1000 * 60 * 60 * 24 * 7,
-    cache: lruCache,
-    request: undefined,
-    getFreshValue: async () => {
-      try {
-        const res = await anilist.fetchTrendingAnime(page, perPage);
-        return res;
-      } catch (error) {
-        console.error(error);
-        return {
-          currentPage: 0,
-          hasNextPage: false,
-          results: [],
-        };
-      }
-    },
-  });
-  return {
-    currentPage: results?.currentPage || 0,
-    hasNextPage: results?.hasNextPage || false,
-    results: [...fetchAnimeResultsHandler(results.results as IAnimeResult[])],
-    ...(results.totalPages && { totalPages: results.totalPages }),
-    ...(results.totalResults && { totalResults: results.totalResults }),
-  };
+  try {
+    const res = await anilist.fetchTrendingAnime(page, perPage);
+    return {
+      currentPage: res?.currentPage || 0,
+      hasNextPage: res?.hasNextPage || false,
+      results: [...fetchAnimeEpisodeHandler(res.results as IAnimeResult[])],
+      ...(res.totalPages && { totalPages: res.totalPages }),
+      ...(res.totalResults && { totalResults: res.totalResults }),
+    };
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 };
 
 export const getAnimePopular = async (page?: number, perPage?: number): Promise<IAnimeList | undefined> => {
   const anilist = generateAnilistMeta();
-  const results = await cachified({
-    key: `anilist-popular-${page}-${perPage}`,
-    ttl: 1000 * 60 * 60 * 24,
-    staleWhileRevalidate: 1000 * 60 * 60 * 24 * 7,
-    cache: lruCache,
-    request: undefined,
-    getFreshValue: async () => {
-      try {
-        const res = await anilist.fetchPopularAnime(page, perPage);
-        return res;
-      } catch (error) {
-        console.error(error);
-        return {
-          currentPage: 0,
-          hasNextPage: false,
-          results: [],
-        };
-      }
-    },
-  });
-  return {
-    currentPage: results?.currentPage || 0,
-    hasNextPage: results?.hasNextPage || false,
-    results: [...fetchAnimeResultsHandler(results.results as IAnimeResult[])],
-    ...(results.totalPages && { totalPages: results.totalPages }),
-    ...(results.totalResults && { totalResults: results.totalResults }),
-  };
+  try {
+    const res = await anilist.fetchPopularAnime(page, perPage);
+    return {
+      currentPage: res?.currentPage || 0,
+      hasNextPage: res?.hasNextPage || false,
+      results: [...fetchAnimeEpisodeHandler(res.results as IAnimeResult[])],
+      ...(res.totalPages && { totalPages: res.totalPages }),
+      ...(res.totalResults && { totalResults: res.totalResults }),
+    };
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 };
 
-export const getAnimeGenre = async (
-  genres: string[],
-  page: number,
-  perPage: number,
-): Promise<IAnimeList | undefined> => {
-  const anilist = generateAnilistMeta();
-  const results = await cachified({
-    key: `anilist-genre-${genres}-${page}-${perPage}`,
-    ttl: 1000 * 60 * 60 * 24,
-    staleWhileRevalidate: 1000 * 60 * 60 * 24 * 7,
-    cache: lruCache,
-    request: undefined,
-    getFreshValue: async () => {
-      try {
-        const res = await anilist.fetchAnimeGenres(genres, page, perPage);
-        return res;
-      } catch (error) {
-        console.error(error);
-        return {
-          currentPage: 0,
-          hasNextPage: false,
-          results: [],
-        };
-      }
-    },
-  });
-  return {
-    currentPage: results?.currentPage || 0,
-    hasNextPage: results?.hasNextPage || false,
-    results: [...fetchAnimeResultsHandler(results.results as IAnimeResult[])],
-    ...(results.totalPages && { totalPages: results.totalPages }),
-    ...(results.totalResults && { totalResults: results.totalResults }),
-  };
-};
+// export const getAnimeGenre = async (
+//   genres: string[],
+//   page: number,
+//   perPage: number,
+// ): Promise<IAnimeList | undefined> => {
+//   const anilist = generateAnilistMeta();
+//   const results = await cachified({
+//     key: `anilist-genre-${genres}-${page}-${perPage}`,
+//     ttl: 1000 * 60 * 60 * 24,
+//     staleWhileRevalidate: 1000 * 60 * 60 * 24 * 7,
+//     cache: lruCache,
+//     request: undefined,
+//     getFreshValue: async () => {
+//       try {
+//         const res = await anilist.fetchAnimeGenres(genres, page, perPage);
+//         return res;
+//       } catch (error) {
+//         console.error(error);
+//         return {
+//           currentPage: 0,
+//           hasNextPage: false,
+//           results: [],
+//         };
+//       }
+//     },
+//   });
+//   return {
+//     currentPage: results?.currentPage || 0,
+//     hasNextPage: results?.hasNextPage || false,
+//     results: [...fetchAnimeResultsHandler(results.results as IAnimeResult[])],
+//     ...(results.totalPages && { totalPages: results.totalPages }),
+//     ...(results.totalResults && { totalResults: results.totalResults }),
+//   };
+// };
 
-export const getAnimeAiringSchedule = async (
-  page?: number,
-  perPage?: number,
-  weekStart?: number | string,
-  weekEnd?: number | string,
-  notYetAired?: boolean,
-): Promise<IAnimeList | undefined> => {
-  const anilist = generateAnilistMeta();
-  const results = await cachified({
-    key: `anilist-airing-schedule-${page}-${perPage}-${weekStart}-${weekEnd}-${notYetAired}`,
-    ttl: 1000 * 60 * 60 * 24,
-    staleWhileRevalidate: 1000 * 60 * 60 * 24 * 7,
-    cache: lruCache,
-    request: undefined,
-    getFreshValue: async () => {
-      try {
-        const res = await anilist.fetchAiringSchedule(page, perPage, weekStart, weekEnd, notYetAired);
-        return res;
-      } catch (error) {
-        console.error(error);
-        return {
-          currentPage: 0,
-          hasNextPage: false,
-          results: [],
-        };
-      }
-    },
-  });
-  return {
-    currentPage: results?.currentPage || 0,
-    hasNextPage: results?.hasNextPage || false,
-    results: [...fetchAnimeResultsHandler(results.results as IAnimeResult[])],
-    ...(results.totalPages && { totalPages: results.totalPages }),
-    ...(results.totalResults && { totalResults: results.totalResults }),
-  };
-};
+// export const getAnimeAiringSchedule = async (
+//   page?: number,
+//   perPage?: number,
+//   weekStart?: number | string,
+//   weekEnd?: number | string,
+//   notYetAired?: boolean,
+// ): Promise<IAnimeList | undefined> => {
+//   const anilist = generateAnilistMeta();
+//   const results = await cachified({
+//     key: `anilist-airing-schedule-${page}-${perPage}-${weekStart}-${weekEnd}-${notYetAired}`,
+//     ttl: 1000 * 60 * 60 * 24,
+//     staleWhileRevalidate: 1000 * 60 * 60 * 24 * 7,
+//     cache: lruCache,
+//     request: undefined,
+//     getFreshValue: async () => {
+//       try {
+//         const res = await anilist.fetchAiringSchedule(page, perPage, weekStart, weekEnd, notYetAired);
+//         return res;
+//       } catch (error) {
+//         console.error(error);
+//         return {
+//           currentPage: 0,
+//           hasNextPage: false,
+//           results: [],
+//         };
+//       }
+//     },
+//   });
+//   return {
+//     currentPage: results?.currentPage || 0,
+//     hasNextPage: results?.hasNextPage || false,
+//     results: [...fetchAnimeResultsHandler(results.results as IAnimeResult[])],
+//     ...(results.totalPages && { totalPages: results.totalPages }),
+//     ...(results.totalResults && { totalResults: results.totalResults }),
+//   };
+// };
 
-export const getAnimeInfo = async (id: string): Promise<IAnimeInfo | undefined> => {
-  const anilist = generateAnilistMeta();
-  const results = await cachified({
-    key: `anilist-info-${id}`,
-    ttl: 1000 * 60 * 60 * 24,
-    staleWhileRevalidate: 1000 * 60 * 60 * 24 * 7,
-    cache: lruCache,
-    request: undefined,
-    getFreshValue: async () => {
-      try {
-        const res = (await anilist.fetchAnilistInfoById(id)) as IAnimeInfo;
-        return {
-          ...res,
-          recommendations: [...fetchAnimeResultsHandler(res.recommendations as IAnimeResult[])],
-        };
-      } catch (error) {
-        console.error(error);
-        return undefined;
-      }
-    },
-  });
-  return results;
-};
+// export const getAnimeInfo = async (id: string): Promise<IAnimeInfo | undefined> => {
+//   const anilist = generateAnilistMeta();
+//   const results = await cachified({
+//     key: `anilist-info-${id}`,
+//     ttl: 1000 * 60 * 60 * 24,
+//     staleWhileRevalidate: 1000 * 60 * 60 * 24 * 7,
+//     cache: lruCache,
+//     request: undefined,
+//     getFreshValue: async () => {
+//       try {
+//         const res = (await anilist.fetchAnilistInfoById(id)) as IAnimeInfo;
+//         return {
+//           ...res,
+//           recommendations: [...fetchAnimeResultsHandler(res.recommendations as IAnimeResult[])],
+//         };
+//       } catch (error) {
+//         console.error(error);
+//         return undefined;
+//       }
+//     },
+//   });
+//   return results;
+// };
 
 export const getAnimeEpisodeInfo = async (
   id: string,
@@ -321,42 +265,23 @@ export const getAnimeEpisodeInfo = async (
   fetchFiller?: boolean,
 ): Promise<IEpisodeInfo[] | undefined> => {
   const anilist = generateAnilistMeta(provider);
-  const results = await cachified({
-    key: `anilist-episode-${id}-${dub}-${provider}-${fetchFiller}`,
-    ttl: 1000 * 60 * 60 * 4,
-    staleWhileRevalidate: 1000 * 60 * 60 * 24,
-    cache: lruCache,
-    request: undefined,
-    getFreshValue: async () => {
-      try {
-        const res = await anilist.fetchEpisodesListById(id, dub, fetchFiller);
-        return res;
-      } catch (error) {
-        console.error(error);
-        return [];
-      }
-    },
-  });
-  return results;
+  try {
+    const res = await anilist.fetchEpisodesListById(id, dub, fetchFiller);
+    return res;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };
 
 export const getAnimeEpisodeStream = async (episodeId: any, provider?: string, server?: string) => {
   const anilist = generateAnilistMeta(provider);
-  const results = await cachified({
-    key: `anilist-episode-stream-${episodeId}-${provider}-${server}`,
-    ttl: 1000 * 60 * 60,
-    staleWhileRevalidate: 1000 * 60 * 60 * 3,
-    cache: lruCache,
-    request: undefined,
-    getFreshValue: async () => {
-      try {
-        const res = await anilist.fetchEpisodeSources(episodeId, server);
-        return res;
-      } catch (error) {
-        console.error(error);
-        return undefined;
-      }
-    },
-  });
-  return results;
+
+  try {
+    const res = await anilist.fetchEpisodeSources(episodeId, server);
+    return res;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 };
