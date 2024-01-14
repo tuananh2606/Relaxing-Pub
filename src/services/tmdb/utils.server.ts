@@ -19,7 +19,7 @@ export class TMDB {
   static readonly key = process.env.NEXT_PUBLIC_API_KEY_TMDB;
 
   static trendingUrl = (mediaType: MediaType, timeWindow: TimeWindowType, language?: string, page?: number): string => {
-    let url = `${this.API_BASE_URL}//trending/${mediaType}/${timeWindow}?api_key=${this.key}`;
+    let url = `${this.API_BASE_URL}/trending/${mediaType}/${timeWindow}?api_key=${this.key}`;
 
     if (language) url += `&language=${language}`;
     if (page) url += `&page=${page}`;
