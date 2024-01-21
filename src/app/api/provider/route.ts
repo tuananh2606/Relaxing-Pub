@@ -1,4 +1,4 @@
-import { type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import getProviderList from '~/services/providers.server';
 
 export async function GET(request: NextRequest) {
@@ -12,23 +12,32 @@ export async function GET(request: NextRequest) {
   const animeType = searchParams.get('animeType');
   const isEnded = searchParams.get('isEnded');
   const tmdbId = searchParams.get('tmdbId');
-  if (!title || !type) throw new Response('Missing params', { status: 400 });
-  const provider = await getProviderList({
-    type,
-    title,
-    orgTitle,
-    year,
-    season,
-    animeId: Number(aid),
-    animeType,
-    isEnded: isEnded === 'true',
-    tmdbId: Number(tmdbId),
-  });
-  if (provider && provider.length > 0)
-    return Response.json(provider, {
-      status: 200,
-      headers: {
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
+  if (!title || !type) throw new NextResponse('Missing params', { status: 400 });
+  try {
+    const provider = await getProviderList({
+      type,
+      title,
+      orgTitle,
+      year,
+      season,
+      animeId: Number(aid),
+      animeType,
+      isEnded: isEnded === 'true',
+      tmdbId: Number(tmdbId),
     });
+    if (provider && provider.length > 0)
+      return NextResponse.json(provider, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error },
+      {
+        status: 500,
+      },
+    );
+  }
 }

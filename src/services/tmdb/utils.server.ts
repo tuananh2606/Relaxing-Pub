@@ -31,7 +31,7 @@ export class TMDB {
     if (size) {
       return `${this.MEDIA_BASE_URL}/${size}/${path}`;
     }
-    return `${this.MEDIA_BASE_URL}/original/${path}`;
+    return `${this.MEDIA_BASE_URL}/original${path}`;
   };
 
   static backdropUrl = (path: string, size?: BackdropSize): string => {

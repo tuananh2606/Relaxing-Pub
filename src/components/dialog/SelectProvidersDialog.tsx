@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'reac
 import { useRouter } from 'next/navigation';
 import { fetcher } from '~/utils/fetcher';
 import type { Provider } from '~/services/providers.server';
+import { DialogHeader, DialogTitle } from '../elements/Dialog';
 
 interface ISelectProvidersDialog {
   id: string;
@@ -80,35 +81,32 @@ const SelectProvidersDialog = (props: ISelectProvidersDialog) => {
   }, []);
 
   return (
-    <div className="absolute top-[2em] mx-4 w-96 max-w-[850px] animate-scale-in-center rounded-md bg-[#181818] pb-9 md:mx-8">
-      <div className="close-btn absolute right-0 top-0 m-[1em]">
-        <button className="rounded-full bg-[#181818] p-[2px]" onClick={closePreviewModal}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 25" fill="none">
-            <path
-              d="M12.0007 10.9002L16.9504 5.95044L18.3646 7.36465L13.4149 12.3144L18.3646 17.2641L16.9504 18.6783L12.0007 13.7286L7.05093 18.6783L5.63672 17.2641L10.5865 12.3144L5.63672 7.36465L7.05093 5.95044L12.0007 10.9002Z"
-              fill="white"
-            />
-          </svg>
-        </button>
-      </div>
+    <>
+      <DialogHeader>
+        <DialogTitle>Select Provider</DialogTitle>
+      </DialogHeader>
       <div className="mt-4 flex w-full flex-col items-center justify-center">
         {provider && Array.isArray(provider)
           ? provider.map((item) => (
-              <button key={item.id} onClick={() => handleProvider(item)}>
+              <button
+                className="rounded-md px-3 py-1 hover:bg-secondary"
+                key={item.id}
+                onClick={() => handleProvider(item)}
+              >
                 {item.provider}
               </button>
             ))
           : null}
-        {/* {globalState === 'loading' ? (
+        {!provider.length ? (
           <div role="status" className="max-w-sm animate-pulse">
             <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700" />
             <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700" />
             <div className="mb-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700" />
             <span className="sr-only">Loading...</span>
           </div>
-        ) : null} */}
+        ) : null}
       </div>
-    </div>
+    </>
   );
 };
 

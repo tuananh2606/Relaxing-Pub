@@ -1,4 +1,4 @@
-import { META, PROVIDERS_LIST } from '@consumet/extensions';
+import { META, MOVIES, PROVIDERS_LIST } from '@consumet/extensions';
 
 import type { IMedia } from '~/types/media';
 import { fetcher } from '~/utils/fetcher';
@@ -285,7 +285,6 @@ export const getInfoWithProvider = async (id: string, type: 'movie' | 'tv', prov
     }
     tmdb = new META.TMDB(TMDB.key, possibleProvider);
   }
-
   try {
     const res = await tmdb.fetchMediaInfo(id, type);
     return res;
@@ -295,8 +294,15 @@ export const getInfoWithProvider = async (id: string, type: 'movie' | 'tv', prov
   }
 };
 
-export const getWatchEpisode = async (id: string, episodeId: string) => {
-  const tmdb = new META.TMDB(TMDB.key);
+export const getWatchEpisode = async (id: string, episodeId: string, provider?: string) => {
+  let tmdb = new META.TMDB(TMDB.key);
+  if (provider) {
+    const possibleProvider = PROVIDERS_LIST.MOVIES.find((p) => p.name.toLowerCase() === provider.toLowerCase());
+    if (!possibleProvider) {
+      throw new Error(`Provider ${provider} not found`);
+    }
+    tmdb = new META.TMDB(TMDB.key, possibleProvider);
+  }
   try {
     const res = await tmdb.fetchEpisodeSources(episodeId, id);
     return res;

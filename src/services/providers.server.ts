@@ -6,6 +6,7 @@ import type { IBilibiliResult } from '~/services/consumet/bilibili/bilibili.type
 import { getKissKhInfo, getKissKhSearch } from '~/services/kisskh/kisskh.server';
 import type { ISearchItem } from '~/services/kisskh/kisskh.types';
 import { getInfoWithProvider } from '~/services/tmdb/tmdb.server';
+import { getMoviesHdInfo, getMoviesHdSearch } from './consumet/moviehdwatch/moviehdwatch.server';
 
 export type Provider = {
   id?: string | number | null;
@@ -67,10 +68,12 @@ const getProviderList = async ({
 }): Promise<Provider[] | undefined> => {
   const getProviders = async () => {
     if (type === 'movie') {
-      const [infoWithProvider, kisskhSearch] = await Promise.all([
+      const [infoWithProvider, kisskhSearch, movieHdSearch] = await Promise.all([
         tmdbId ? getInfoWithProvider(tmdbId.toString(), 'movie') : undefined,
         true ? getKissKhSearch(title) : undefined,
+        tmdbId ? getInfoWithProvider(tmdbId.toString(), 'movie', 'MovieHdWatch') : undefined,
       ]);
+
       const provider: Provider[] = (infoWithProvider as IMovieInfo)?.episodeId
         ? [
             {
@@ -79,15 +82,23 @@ const getProviderList = async ({
             },
           ]
         : [];
+      const findMovieHd = movieHdSearch as IMovieInfo;
+
       const findKissKh: ISearchItem | undefined = kisskhSearch?.find((item) =>
         item.title.includes(' (')
           ? item.title.replace(/ *\([^)]*\) */g, '').toLowerCase() === title.toLowerCase()
           : item.title.toLowerCase() === title.toLowerCase(),
       );
+
       if (findKissKh && findKissKh.id)
         provider.push({
           id: findKissKh.id,
           provider: 'KissKh',
+        });
+      if (findMovieHd?.episodeId)
+        provider.push({
+          id: findMovieHd.id,
+          provider: 'MovieHdWatch',
         });
       return provider;
     }
