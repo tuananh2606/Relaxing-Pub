@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, Suspense, memo, useCallback } from 'react';
+import { Dispatch, SetStateAction, memo, useCallback } from 'react';
 import Link from 'next/link';
 
 import toHourAndMinutes from '~/utils/toHourAndMinutes';
@@ -39,6 +39,9 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
     someGenres.push(ele.name);
   });
 
+  const runtime = (details as IMovieDetail)?.runtime!;
+  const episodes = (details as ITvShowDetail)?.number_of_episodes!;
+  const seasons = (details as ITvShowDetail)?.number_of_seasons!;
   const releaseYear = new Date(
     (details as IMovieDetail)?.release_date || (details as ITvShowDetail)?.first_air_date || '',
   ).getFullYear();
@@ -51,17 +54,17 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
 
   return (
     <div className="absolute top-[2em] mx-4 w-auto max-w-[850px] animate-scale-in-center rounded-md bg-[#181818] pb-9 md:mx-8">
-      <div className="image-wrapper relative block w-full">
-        <Suspense fallback={<PreviewModalSkeleton />}>
-          <ImageWithFallback
-            src={url}
-            alt="Anh"
-            width="0"
-            height="0"
-            sizes="100vw"
-            className="h-auto w-full rounded-t-md"
-          />
-        </Suspense>
+      <div className="image-wrapper relative block h-[480px] w-full">
+        <ImageWithFallback
+          src={url}
+          alt="Anh"
+          fill
+          sizes="850px"
+          // width="0"
+          // height="0"
+          // sizes="100vw"
+          className="h-auto w-full rounded-t-md"
+        />
 
         <div className={`${styles.imageWrapper} absolute top-0 h-full w-full`}></div>
       </div>
@@ -79,7 +82,14 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
         <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-8">
           <div>
             <span>{releaseYear}</span>
-            <span> ‧ {toHourAndMinutes((details as IMovieDetail)?.runtime!)}</span>
+            {runtime ? (
+              <span> ‧ {toHourAndMinutes(runtime)}</span>
+            ) : (
+              <>
+                <span> ‧ {episodes > 0 ? episodes + ' episodes' : episodes + ' episode'} </span>
+                <span> ‧ {seasons > 0 ? seasons + ' seasons' : seasons + ' season'}</span>
+              </>
+            )}
             <p className="mt-3 text-sm">{details?.overview}</p>
           </div>
           <div className="">

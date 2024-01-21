@@ -7,7 +7,7 @@ import artplayerPluginHlsQuality from 'artplayer-plugin-hls-quality';
 import PlayerHotKey from './PlayerHotkey';
 import { ISource } from '@consumet/extensions';
 import PlayerError from './PlayerError';
-import { INSPECT_MAX_BYTES } from 'buffer';
+import { useSearchParams } from 'next/navigation';
 
 function playM3u8(video: HTMLMediaElement, url: string, art: Artplayer) {
   if (Hls.isSupported()) {
@@ -26,7 +26,7 @@ function playM3u8(video: HTMLMediaElement, url: string, art: Artplayer) {
 
 interface IGlobalPlayerProps {
   url?: string;
-  item: ISource | undefined;
+  item: ISource;
 }
 
 interface ISubtitleState {
@@ -37,31 +37,37 @@ interface ISubtitleState {
 const GlobalPlayer = (props: IGlobalPlayerProps) => {
   const { url, item } = props;
   const [artPlayer, setArtPlayer] = useState<Artplayer | null>(null);
-  const [subtitles, setSubtitles] = useState<ISubtitleState[]>([]);
+
   const [isSettingsOpen, setSettingsOpen] = useState(false);
   const hiddenFileInput = useRef<HTMLInputElement | null>(null);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const sub = event.target.files[0];
-      const objectURL = URL.createObjectURL(sub);
-      setSubtitles([
-        ...subtitles,
-        {
-          html: 'Test',
-          url: objectURL,
-        },
-      ]);
-    }
-  };
-  useEffect(() => {}, [artPlayer]);
+  const searchParams = useSearchParams();
+  const provider = searchParams.get('provider');
+
   return (
     <>
       {item ? (
         <ArtPlayer
           option={{
             container: '.artplayer-app',
-            url: item.sources?.find((source) => Number(source.quality) === 720)?.url,
+            url:
+              provider === 'Loklok'
+                ? item.sources?.find((item) => Number(item.quality) === 720)?.url ||
+                  (item.sources && item.sources[0]?.url)
+                : provider === 'Flixhq'
+                  ? item.sources?.find((item) => item.quality === 'auto')?.url || (item.sources && item.sources[0]?.url)
+                  : provider === 'Gogo' || provider === 'Zoro'
+                    ? item.sources?.find((item) => item.quality === 'default')?.url ||
+                      (item.sources && item.sources[0]?.url)
+                    : provider === 'Bilibili'
+                      ? item.sources && item.sources[0]?.url
+                      : provider === 'KissKh'
+                        ? item.sources && item.sources[0]?.url
+                        : provider === 'test'
+                          ? item.sources?.find((source) => Number(source.quality) === 720)?.url
+                          : item.sources?.find((item) => item.quality === 'default')?.url ||
+                            (item.sources && item.sources[0]?.url) ||
+                            '',
             id: 'your-url-id',
             volume: 1,
             isLive: false,
@@ -78,7 +84,7 @@ const GlobalPlayer = (props: IGlobalPlayerProps) => {
             fullscreen: true,
             fullscreenWeb: false,
             subtitleOffset: true,
-            miniProgressBar: true,
+            miniProgressBar: false,
             mutex: true,
             backdrop: true,
             hotkey: true,
@@ -141,15 +147,25 @@ const GlobalPlayer = (props: IGlobalPlayerProps) => {
             //     },
             subtitle: {
               url:
-                item.subtitles && item.subtitles.length > 0
-                  ? item.subtitles?.find((subtitle) => subtitle.lang.includes('English'))?.url
-                  : '',
+                provider === 'Loklok'
+                  ? item.subtitles?.find((item: { lang: string; url: string }) => item.lang.includes('English'))?.url
+                  : provider === 'Flixhq'
+                    ? item.subtitles?.find((item: { lang: string; url: string }) => item.lang.includes('English'))
+                        ?.url || ''
+                    : provider === 'KissKh'
+                      ? item.subtitles?.find((item: { lang: string; url: string; default?: boolean }) => item.default)
+                          ?.url || ''
+                      : provider === 'test'
+                        ? item.subtitles?.find((item: { lang: string; url: string }) => item.lang.includes('ch-jp'))
+                            ?.url || ''
+                        : item.subtitles?.find((item: { lang: string; url: string }) => item.lang.includes('English'))
+                            ?.url || '',
               type: 'vtt',
               encoding: 'utf-8',
               escape: true,
               style: {
                 color: '#fff',
-                'font-size': '20px',
+                'font-size': '22px',
               },
             },
             settings: [
