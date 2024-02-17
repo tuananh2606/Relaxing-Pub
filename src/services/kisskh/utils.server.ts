@@ -14,10 +14,10 @@ export default class KissKh {
   static searchUrl = (query: string, type?: number): string =>
     `${KissKh.API_BASE_URL}/DramaList/Search?q=${query}&type=${type || 0}`;
 
-  static infoUrl = (id: number): string => `${KissKh.API_BASE_URL}/DramaList/Drama/${id}?isq=false`;
+  static infoUrl = (id: string): string => `${KissKh.API_BASE_URL}/DramaList/Drama/${id}?isq=false`;
 
-  static episodeUrl = (episodeId: number): string =>
+  static episodeUrl = (episodeId: string): string =>
     `${KissKh.API_BASE_URL}/DramaList/Episode/${episodeId}.png?err=false&ts=&time=`;
 
-  static subUrl = (episodeId: number): string => `${KissKh.API_BASE_URL}/Sub/${episodeId}`;
+  static subUrl = (episodeId: string): string => `${KissKh.API_BASE_URL}/Sub/${episodeId}`;
 }

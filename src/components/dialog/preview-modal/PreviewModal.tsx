@@ -53,21 +53,19 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
   }, []);
 
   return (
-    <div className="absolute top-[2em] mx-4 w-auto max-w-[850px] animate-scale-in-center rounded-md bg-[#181818] pb-9 md:mx-8">
-      <div className="image-wrapper relative block h-[480px] w-full">
+    <div className="relative top-[2em] mx-4 h-fit w-auto max-w-[850px] animate-scale-in-center rounded-md bg-[#181818] pb-9 md:mx-8">
+      <div className="image-wrapper relative  w-full ">
         <ImageWithFallback
           src={url}
           alt="Anh"
-          fill
-          sizes="850px"
-          // width="0"
-          // height="0"
-          // sizes="100vw"
+          width={0}
+          height={0}
+          sizes="100vw"
           className="h-auto w-full rounded-t-md"
         />
-
         <div className={`${styles.imageWrapper} absolute top-0 h-full w-full`}></div>
       </div>
+
       <div className="close-btn absolute right-0 top-0 m-[1em]">
         <button className="rounded-full bg-[#181818] p-[2px]" onClick={closePreviewModal}>
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 25" fill="none">
@@ -79,23 +77,25 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
         </button>
       </div>
       <div className="px-12 py-3">
-        <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-8">
+        <div className="grid grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-8">
           <div>
             <span>{releaseYear}</span>
             {runtime ? (
               <span> ‧ {toHourAndMinutes(runtime)}</span>
-            ) : (
-              <>
+            ) : <>
                 <span> ‧ {episodes > 0 ? episodes + ' episodes' : episodes + ' episode'} </span>
                 <span> ‧ {seasons > 0 ? seasons + ' seasons' : seasons + ' season'}</span>
-              </>
+              </> ? (
+              !runtime
+            ) : (
+              <span></span>
             )}
             <p className="mt-3 text-sm">{details?.overview}</p>
           </div>
           <div className="">
             <ul>
               <li>
-                <span className="text-sm text-[#777777]">Dien vien: </span>
+                <span className="text-sm text-[#777777]">Diễn viên: </span>
                 {someActors?.slice(0, 3).map((ele, idx) => (
                   <span key={idx} className={`${styles.link} text-sm`}>
                     <Link href="#" className="hover:underline">
@@ -105,7 +105,7 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
                 ))}
               </li>
               <li>
-                <span className="text-sm text-[#777777]">The loai: </span>
+                <span className="text-sm text-[#777777]">Thể loại: </span>
                 {someGenres?.slice(0, 3).map((ele, idx) => (
                   <span key={idx} className={`${styles.link} text-sm`}>
                     <Link href="#" className="hover:underline">

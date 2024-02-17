@@ -68,10 +68,9 @@ const getProviderList = async ({
 }): Promise<Provider[] | undefined> => {
   const getProviders = async () => {
     if (type === 'movie') {
-      const [infoWithProvider, kisskhSearch, movieHdSearch] = await Promise.all([
+      const [infoWithProvider, kisskhSearch] = await Promise.all([
         tmdbId ? getInfoWithProvider(tmdbId.toString(), 'movie') : undefined,
-        true ? getKissKhSearch(title) : undefined,
-        tmdbId ? getInfoWithProvider(tmdbId.toString(), 'movie', 'MovieHdWatch') : undefined,
+        getKissKhSearch(title),
       ]);
 
       const provider: Provider[] = (infoWithProvider as IMovieInfo)?.episodeId
@@ -82,7 +81,6 @@ const getProviderList = async ({
             },
           ]
         : [];
-      const findMovieHd = movieHdSearch as IMovieInfo;
 
       const findKissKh: ISearchItem | undefined = kisskhSearch?.find((item) =>
         item.title.includes(' (')
@@ -95,11 +93,7 @@ const getProviderList = async ({
           id: findKissKh.id,
           provider: 'KissKh',
         });
-      if (findMovieHd?.episodeId)
-        provider.push({
-          id: findMovieHd.id,
-          provider: 'MovieHdWatch',
-        });
+
       return provider;
     }
     if (type === 'tv') {
@@ -189,6 +183,7 @@ const getProviderList = async ({
   const results = await getProviders();
   // if (typeof value === 'undefined') return false;
   // return true;
+  console.log(results);
   return results;
 };
 
