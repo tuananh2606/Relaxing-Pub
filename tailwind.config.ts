@@ -1,7 +1,6 @@
 import type { Config } from 'tailwindcss';
 const colors = require('tailwindcss/colors');
 
-
 const config: Config = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -79,6 +78,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [require('@xpd/tailwind-3dtransforms'), require('tailwindcss-animate')],
+  plugins: [require('tailwindcss-animate')],
 };
 export default config;
