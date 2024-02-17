@@ -25,13 +25,12 @@ export async function GET(request: NextRequest) {
       isEnded: isEnded === 'true',
       tmdbId: Number(tmdbId),
     });
-    if (provider && provider.length > 0)
-      return NextResponse.json(provider, {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    return NextResponse.json(provider, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
     return NextResponse.json(
       { error: error },

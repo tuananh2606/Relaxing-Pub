@@ -45,18 +45,33 @@ const SelectProvidersDialog = (props: ISelectProvidersDialog) => {
       if (type === 'movie') {
         const res: Provider[] = await fetcher({
           url: `/api/provider?title=${title}&type=${type}&origTitle=${origTitle}&year=${year}&isEnded=${isEnded}&tmdbId=${tmdbId}`,
+          options: {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
         });
         setProvider(res);
       }
       if (type === 'tv') {
         const res: Provider[] = await fetcher({
           url: `/api/provider?title=${title}&type=${type}&origTitle=${origTitle}&year=${year}&season=${season}&isEnded=${isEnded}&tmdbId=${tmdbId}`,
+          options: {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
         });
         setProvider(res);
       }
       if (type === 'anime') {
         const res: Provider[] = await fetcher({
           url: `/api/provider?title=${title}&type=${type}&origTitle=${origTitle}&year=${year}&aid=${tmdbId}&animeType=${animeType}&isEnded=${isEnded}`,
+          options: {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
         });
         setProvider(res);
       }
@@ -68,7 +83,7 @@ const SelectProvidersDialog = (props: ISelectProvidersDialog) => {
 
   const handleProvider = (item: Provider) => {
     closePreviewModal();
-    if (type === 'movie') router.push(`/watch?id=${item.id}&episodeId=${id}&provider=${item.provider}`);
+    if (type === 'movie') router.push(`/watch?id=${item.id}${id && `&episodeId=${id}`}&provider=${item.provider}`);
     if (type === 'tv')
       router.push(`/tv-shows/${id}/season/${season}/episode/${episode}/watch?provider=${item.provider}&id=${item.id}`);
     if (type === 'anime')

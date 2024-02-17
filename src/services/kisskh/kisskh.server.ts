@@ -14,7 +14,7 @@ export const getKissKhSearch = async (query: string, type?: number): Promise<ISe
   }
 };
 
-export const getKissKhInfo = async (id: number): Promise<IItemInfo | undefined> => {
+export const getKissKhInfo = async (id: string): Promise<IItemInfo | undefined> => {
   try {
     const fetched = await fetcher<IItemInfo>({
       url: KissKh.infoUrl(id),
@@ -25,10 +25,10 @@ export const getKissKhInfo = async (id: number): Promise<IItemInfo | undefined> 
   }
 };
 
-export const getKissKhEpisodeStream = async (episodeId: number): Promise<IEpisodeVideo | undefined> => {
+export const getKissKhEpisodeStream = async (id: string): Promise<IEpisodeVideo | undefined> => {
   try {
     const fetched = await fetcher<IEpisodeVideo>({
-      url: KissKh.episodeUrl(episodeId),
+      url: KissKh.episodeUrl(id),
     });
     return fetched;
   } catch (error) {
@@ -36,7 +36,7 @@ export const getKissKhEpisodeStream = async (episodeId: number): Promise<IEpisod
   }
 };
 
-export const getKissKhEpisodeSubtitle = async (episodeId: number): Promise<IVideoSubtitle[] | undefined> => {
+export const getKissKhEpisodeSubtitle = async (episodeId: string): Promise<IVideoSubtitle[] | undefined> => {
   try {
     const fetched = await fetcher<IVideoSubtitle[]>({
       url: KissKh.subUrl(episodeId),

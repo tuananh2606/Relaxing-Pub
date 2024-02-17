@@ -16,7 +16,7 @@ const HeroPlayer = ({ isMuted, url, playing, backdropPath }: IHeroPlayer) => {
   const [isEnded, setEndedVideo] = useState<boolean>(false);
   return (
     <AspectRatio ratio={16 / 9}>
-      {!isEnded ? (
+      {!isEnded && url ? (
         <ReactPlayer
           className="pointer-events-none"
           playing={playing}

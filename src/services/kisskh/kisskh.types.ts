@@ -3,7 +3,7 @@ export interface ISearchItem {
   label: string;
   favoriteID: number;
   thumbnail: string;
-  id: number;
+  id: string;
   title: string;
 }
 

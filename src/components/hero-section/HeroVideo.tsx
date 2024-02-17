@@ -31,8 +31,6 @@ const HeroVideo = ({ items }: IHeroVideo) => {
   const [trailerVideo, setTrailerVideo] = useState<any>();
   const { videos, media, mediaInfo, credits, details } = items;
 
-  console.log(details);
-
   const { status } = details as IMovieDetail | ITvShowDetail;
   const id = (mediaInfo as IMovieInfo | IAnimeInfo)?.episodeId;
   const title = (details as IMovieDetail)?.title || (details as ITvShowDetail)?.name || '';
