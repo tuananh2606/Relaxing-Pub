@@ -27,9 +27,9 @@ export class TMDB {
     return url;
   };
 
-  static posterUrl = (path: string, size?: PosterSize): string => {
-    if (size) {
-      return `${this.MEDIA_BASE_URL}/${size}/${path}`;
+  static posterUrl = (path: string, width?: PosterSize): string => {
+    if (width) {
+      return `${this.MEDIA_BASE_URL}/${width}${path}`;
     }
     return `${this.MEDIA_BASE_URL}/original${path}`;
   };

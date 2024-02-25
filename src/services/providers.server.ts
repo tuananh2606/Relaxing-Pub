@@ -68,9 +68,8 @@ const getProviderList = async ({
 }): Promise<Provider[] | undefined> => {
   const getProviders = async () => {
     if (type === 'movie') {
-      const [infoWithProvider, kisskhSearch] = await Promise.all([
+      const [infoWithProvider] = await Promise.all([
         tmdbId ? getInfoWithProvider(tmdbId.toString(), 'movie') : undefined,
-        getKissKhSearch(title),
       ]);
 
       const provider: Provider[] = (infoWithProvider as IMovieInfo)?.episodeId
@@ -82,25 +81,10 @@ const getProviderList = async ({
           ]
         : [];
 
-      const findKissKh: ISearchItem | undefined = kisskhSearch?.find((item) =>
-        item.title.includes(' (')
-          ? item.title.replace(/ *\([^)]*\) */g, '').toLowerCase() === title.toLowerCase()
-          : item.title.toLowerCase() === title.toLowerCase(),
-      );
-
-      if (findKissKh && findKissKh.id)
-        provider.push({
-          id: findKissKh.id,
-          provider: 'KissKh',
-        });
-
       return provider;
     }
     if (type === 'tv') {
-      const [infoWithProvider, kisskhSearch] = await Promise.all([
-        tmdbId ? getInfoWithProvider(tmdbId.toString(), 'tv') : undefined,
-        true ? getKissKhSearch(title) : undefined,
-      ]);
+      const [infoWithProvider] = await Promise.all([tmdbId ? getInfoWithProvider(tmdbId.toString(), 'tv') : undefined]);
       const findTvSeason = (infoWithProvider as IMovieInfo)?.seasons?.find((s) => s.season === Number(season));
       const provider: Provider[] = findTvSeason?.episodes.some((e) => e.id)
         ? [
@@ -111,28 +95,12 @@ const getProviderList = async ({
             },
           ]
         : [];
-      const findKissKh: ISearchItem | undefined = kisskhSearch?.find((item) => {
-        if (item && item.title && item.title.includes('Season')) {
-          const [itemTitle, seasonNumber] = item.title.split(' - Season ');
-          return itemTitle.toLowerCase() === title.toLowerCase() && Number(seasonNumber) === Number(season);
-        }
-        return item?.title.toLowerCase() === title.toLowerCase();
-      });
-      const [kissKhDetail] = await Promise.all([
-        findKissKh && findKissKh.id ? getKissKhInfo(findKissKh.id) : undefined,
-      ]);
-      if (findKissKh && findKissKh.id)
-        provider.push({
-          id: findKissKh.id,
-          provider: 'KissKh',
-          episodesCount: kissKhDetail?.episodesCount || 0,
-        });
+
       return provider;
     }
     if (type === 'anime') {
-      const [bilibiliSearch, kisskhSearch, gogoEpisodes, zoroEpisodes] = await Promise.all([
+      const [bilibiliSearch, gogoEpisodes, zoroEpisodes] = await Promise.all([
         true ? getBilibiliSearch(title) : undefined,
-        true ? getKissKhSearch(title, 3) : undefined,
         getAnimeEpisodeInfo(animeId?.toString() || '', undefined, 'gogoanime'),
         getAnimeEpisodeInfo(animeId?.toString() || '', undefined, 'zoro'),
       ]);
@@ -151,25 +119,16 @@ const getProviderList = async ({
           episodesCount: zoroEpisodes.length,
         });
       }
-      const findKissKh: ISearchItem | undefined = kisskhSearch?.find((item) =>
-        item.title.includes(' - ') ? item.title.split(' - ')[1] === title : item.title === title,
-      );
+
       const findBilibili: IBilibiliResult | undefined = bilibiliSearch?.results.find((anime) => {
         if (anime.title.includes('×')) {
           return anime.title.replace(/×/g, 'x').toLowerCase() === title.replace(/\s/g, '').toLowerCase();
         }
         return anime.title.toLowerCase() === title.toLowerCase();
       });
-      const [kissKhDetail, bilibiliDetail] = await Promise.all([
-        findKissKh && findKissKh.id ? getKissKhInfo(findKissKh.id) : undefined,
+      const [bilibiliDetail] = await Promise.all([
         findBilibili && findBilibili.id ? getBilibiliInfo(findBilibili.id) : undefined,
       ]);
-      if (findKissKh && findKissKh.id)
-        provider.push({
-          id: findKissKh.id.toString(),
-          provider: 'KissKh',
-          episodesCount: kissKhDetail?.episodesCount || 0,
-        });
       if (findBilibili && findBilibili.id) {
         provider.push({
           id: findBilibili.id.toString(),
