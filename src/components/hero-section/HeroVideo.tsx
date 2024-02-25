@@ -1,13 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { IAnimeInfo, IMovieInfo } from '@consumet/extensions';
-import { Suspense } from 'react';
 
 import HeroPlayer from '../player/HeroPlayer';
 import styles from './hero-video.module.scss';
-import { preload } from '../dialog/preview-modal/PreviewModal';
 import { IVideos, ICredit, IMovieDetail, ITvShowDetail } from '~/services/tmdb/tmdb.types';
-import PreviewModalSkeleton from '../ui/skeleton/PreviewModalSkeleton';
 import { SelectProvidersDialog, PreviewModal } from '../dialog';
 import { IMedia } from '~/types/media';
 import { Dialog, DialogContent, DialogTrigger } from '../elements/Dialog';
