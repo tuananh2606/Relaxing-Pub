@@ -7,11 +7,9 @@ import {
   getTvShowDetail,
 } from '~/services/tmdb/tmdb.server';
 import dynamic from 'next/dynamic';
-const HeroVideo = dynamic(() => import('~/components/hero-section/HeroVideo'), { ssr: false });
-import { Suspense } from 'react';
+const HeroVideo = dynamic(() => import('~/components/Home/HeroSection/HeroVideo'));
 import { IMedia } from '~/types/media';
-import { Carousel, CarouselSlide, CarouselParallax } from '~/components/elements/Carousel';
-import Image from 'next/image';
+import TrendingCarousel from '~/components/Home/Main/TrendingCarousel';
 
 export default async function Home() {
   const { items } = await getTrending('all', 'day');
@@ -35,26 +33,10 @@ export default async function Home() {
     details: details,
   };
 
-  console.log(items);
-
   return (
-    <main className="min-h-screen">
+    <main className="my-16 min-h-screen lg:mt-0">
       <HeroVideo items={data} />
-      <Carousel options={{ loop: true, dragFree: true }}>
-        {items?.map((slide, idx) => (
-          <CarouselSlide key={idx} className=" !flex-[0_0_220px]">
-            <Image
-              alt="Anh"
-              src={slide.posterPath || ''}
-              width={0}
-              height={0}
-              sizes="100vw"
-              className="h-full w-full rounded-lg"
-            />
-            <h3 className="overflow-auto text-white">{slide.originalTitle}</h3>
-          </CarouselSlide>
-        ))}
-      </Carousel>
+      <TrendingCarousel items={items} />
     </main>
   );
 }

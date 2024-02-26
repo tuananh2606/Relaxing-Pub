@@ -28,7 +28,7 @@ const NavBar = () => {
 
       <div
         className={cn(
-          'fixed inset-0 mt-14 h-full bg-black md:inset-[0_70%_0_0]  lg:relative lg:left-0 lg:mt-0 lg:flex lg:w-full lg:translate-x-0 lg:items-center lg:bg-transparent',
+          'fixed inset-0 mt-14 h-full bg-black md:inset-[0_70%_0_0] lg:relative lg:left-0 lg:mt-0 lg:flex lg:w-full lg:translate-x-0 lg:items-center lg:bg-transparent',
 
           toggle ? 'animate-in slide-in-from-left' : '-translate-x-full',
         )}
