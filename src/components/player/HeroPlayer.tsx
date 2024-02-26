@@ -18,7 +18,7 @@ const HeroPlayer = ({ isMuted, url, playing, backdropPath }: IHeroPlayer) => {
     <AspectRatio ratio={16 / 9}>
       {!isEnded && url ? (
         <ReactPlayer
-          className="pointer-events-none"
+          className="pointer-events-none "
           playing={playing}
           volume={0.5}
           muted={isMuted}
@@ -33,8 +33,7 @@ const HeroPlayer = ({ isMuted, url, playing, backdropPath }: IHeroPlayer) => {
             youtube: {
               playerVars: {
                 disablekb: 1,
-                rel: 1,
-                cc_load_policy: 3,
+                rel: 0,
                 iv_load_policy: 3,
                 enablejsapi: window.location.href,
                 origin: 1,
