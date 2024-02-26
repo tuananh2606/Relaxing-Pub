@@ -28,7 +28,10 @@ const Carousel = ({ className, options, children, ...props }: Carousel) => {
 
   return (
     <div className="relative">
-      <button className="absolute left-0 top-[50%] z-10 rounded-full bg-gray-950 p-1" onClick={scrollPrev}>
+      <button
+        className="absolute left-0 top-[50%] z-10 hidden rounded-full bg-gray-950 p-1 md:block"
+        onClick={scrollPrev}
+      >
         <ChevronLeftIcon width={30} height={30} />
       </button>
       <div className="overflow-hidden" ref={emblaRef}>
@@ -36,7 +39,10 @@ const Carousel = ({ className, options, children, ...props }: Carousel) => {
           {children}
         </div>
       </div>
-      <button className="absolute right-0 top-[50%] z-10 rounded-full bg-gray-950 p-1 " onClick={scrollNext}>
+      <button
+        className="absolute right-0 top-[50%] z-10 hidden rounded-full bg-gray-950 p-1 md:block "
+        onClick={scrollNext}
+      >
         <ChevronRightIcon width={30} height={30} />
       </button>
     </div>
