@@ -11,7 +11,7 @@ const WatchPage = async ({ searchParams }: { searchParams: { [key: string]: stri
   console.log(streamLink);
   return (
     <div className="h-screen max-h-screen w-full">
-      <GlobalPlayer item={streamLink} />
+      {/* <GlobalPlayer item={streamLink} /> */}
     </div>
   );
 };
