@@ -13,7 +13,7 @@ import type {
 
 export class TMDB {
   static readonly API_BASE_URL = 'https://api.themoviedb.org/3';
-
+  static readonly IMDB_API_BASE_URL = 'https://www.imdb.com';
   static readonly MEDIA_BASE_URL = 'https://image.tmdb.org/t/p';
 
   static readonly key = process.env.NEXT_PUBLIC_API_KEY_TMDB;
@@ -36,16 +36,16 @@ export class TMDB {
 
   static backdropUrl = (path: string, size?: BackdropSize): string => {
     if (size) {
-      return `${this.MEDIA_BASE_URL}/${size}/${path}`;
+      return `${this.MEDIA_BASE_URL}/${size}${path}`;
     }
-    return `${this.MEDIA_BASE_URL}/${size}/${path}`;
+    return `${this.MEDIA_BASE_URL}/original${path}`;
   };
 
   static profileUrl = (path: string | undefined, size?: ProfileSize): string => {
     if (size) {
-      return `${this.MEDIA_BASE_URL}/${size}/${path}`;
+      return `${this.MEDIA_BASE_URL}/${size}${path}`;
     }
-    return `${this.MEDIA_BASE_URL}/original/${path}`;
+    return `${this.MEDIA_BASE_URL}/original${path}`;
   };
 
   static listMoviesUrl = (type: ListMovieType, page?: number, language?: string, region?: string): string => {

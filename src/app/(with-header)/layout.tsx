@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import '~/app/globals.css';
-import Header from '~/layouts/header/Header';
+import { Footer, Header } from '~/layouts';
 
 export const metadata: Metadata = {
   title: 'Film Pub',
@@ -9,9 +9,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <Header />
       {children}
-    </>
+      <Footer />
+    </div>
   );
 }

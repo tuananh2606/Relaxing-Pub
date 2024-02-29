@@ -51,8 +51,8 @@ const TrendingCarousel = (props: Props) => {
   }, [media]);
 
   return (
-    <div>
-      <Carousel className="mt-4" options={{ loop: true, dragFree: true }}>
+    <div className="m-3">
+      <Carousel className="mt-4" options={{ align: 'start', loop: false, dragFree: true }}>
         {items?.map((slide, idx) => (
           <CarouselSlide key={idx} className=" !flex-[0_0_220px]">
             <div onClick={() => handleOpenModal(slide.id, slide.mediaType)}>
