@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ProviderTopLoader, Providers } from '~/utils';
+import { Suspense } from 'react';
 
 const inter = Inter({ subsets: ['latin', 'vietnamese'] });
 
@@ -16,7 +17,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${inter.className} dark`}>
         <Providers>
-          <ProviderTopLoader>{children}</ProviderTopLoader>
+          <Suspense>
+            <ProviderTopLoader>{children}</ProviderTopLoader>
+          </Suspense>
         </Providers>
       </body>
     </html>
