@@ -1,10 +1,14 @@
 $slide-height: 19rem;
 $slide-spacing: 1rem;
 $slide-size: 80%;
+$slide-size-sm: 45%;
 $slide-spacing-sm: 0.5rem;
-$slide-size-sm: 40%;
+$slide-size-md: 25%;
+$slide-spacing-md: 0.5rem;
+$slide-size-lg: calc(100% / 5);
 $slide-spacing-lg: 0.5rem;
-$slide-size-lg: calc(100% / 4);
+$slide-size-xl: calc(100% / 7);
+$slide-spacing-xl: 1rem;
 
 :export {
   slide-height: $slide-height;
@@ -27,7 +31,6 @@ $slide-size-lg: calc(100% / 4);
   backface-visibility: hidden;
   display: flex;
   touch-action: pan-y;
-  margin-left: calc($slide-spacing * -1);
 }
 @media (min-width: 750px) {
   .embla__container {
@@ -37,18 +40,26 @@ $slide-size-lg: calc(100% / 4);
 
 .embla__slide {
   min-width: 0;
-  flex: 0 0 $slide-size;
+  flex: 0 0 $slide-size-sm;
   padding-left: $slide-spacing-sm;
 }
-@media (min-width: 750px) {
+@media (min-width: 768px) {
   .embla__slide {
-    flex: 0 0 $slide-size-sm;
-    padding-left: $slide-spacing-sm;
+    flex: 0 0 $slide-size-md;
+    padding-left: $slide-spacing-md;
   }
 }
-@media (min-width: 1200px) {
+
+@media (min-width: 1024px) {
   .embla__slide {
     flex: 0 0 $slide-size-lg;
+    padding-left: $slide-spacing-lg;
+  }
+}
+
+@media (min-width: 1280px) {
+  .embla__slide {
+    flex: 0 0 $slide-size-xl;
     padding-left: $slide-spacing-lg;
   }
 }

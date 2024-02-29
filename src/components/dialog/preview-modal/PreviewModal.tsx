@@ -1,17 +1,11 @@
-import { Dispatch, SetStateAction, memo, useCallback } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import Link from 'next/link';
 
-import ConvertToHourAndMinutes from '~/utils/ConvertToHourAndMinutes';
+import { ConvertToHourAndMinutes } from '~/utils';
 import styles from './preview-modal.module.scss';
-import { getCredits, getMovieDetail } from '~/services/tmdb/tmdb.server';
 import { ICredit, IMovieDetail, ITvShowDetail } from '~/services/tmdb/tmdb.types';
-import PreviewModalSkeleton from '../../ui/skeleton/PreviewModalSkeleton';
+import PreviewModalSkeleton from '../../ui/Skeleton/PreviewModalSkeleton';
 import ImageWithFallback from '../../shared/ImageWithFallback';
-
-export const preload = (id: number, mediaType: any) => {
-  void getCredits(mediaType, id);
-  void getMovieDetail(id);
-};
 
 interface IPreviewModal {
   items: {
@@ -47,26 +41,29 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
   )
     .getFullYear()
     .toString();
-  const url = `${process.env.NEXT_PUBLIC_URL_IMAGES}/${details?.backdrop_path}`;
-
-  const closePreviewModal = useCallback(() => {
+  const url = details?.backdrop_path ? `${process.env.NEXT_PUBLIC_URL_IMAGES}${details?.backdrop_path}` : '';
+  const closePreviewModal = () => {
     setIsOpenModal(false);
     setIsPlaying && setIsPlaying(true);
-  }, []);
-
+  };
+  console.log(runtime);
+  console.log(episodes);
   return (
     <div className="fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center">
       <div className="previewMpdel-backdrop fixed inset-0 z-20 h-full w-full bg-black opacity-70 transition-opacity"></div>
       <div className="relative z-30 mx-4 h-fit w-auto max-w-[850px] animate-scale-in-center rounded-md bg-[#181818] pb-9 md:mx-8">
         <div className="image-wrapper relative  w-full ">
-          <ImageWithFallback
-            src={url}
-            alt="Anh"
-            width={0}
-            height={0}
-            sizes="100vw"
-            className="h-auto w-full rounded-t-md"
-          />
+          {url && (
+            <ImageWithFallback
+              src={`${process.env.NEXT_PUBLIC_URL_IMAGES}${details!.backdrop_path}`}
+              alt="Anh"
+              width={0}
+              height={0}
+              sizes="100vw"
+              className="h-auto w-full rounded-t-md"
+            />
+          )}
+
           <div className={`${styles.imageWrapper} absolute top-0 h-full w-full`}></div>
         </div>
 
@@ -84,15 +81,14 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
           <div className="grid gap-4 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] md:gap-8">
             <div>
               <span>{releaseYear}</span>
+
               {runtime ? (
                 <span> ‧ {ConvertToHourAndMinutes(runtime)}</span>
-              ) : <>
+              ) : (
+                <>
                   <span> ‧ {episodes > 0 ? episodes + ' episodes' : episodes + ' episode'} </span>
                   <span> ‧ {seasons > 0 ? seasons + ' seasons' : seasons + ' season'}</span>
-                </> ? (
-                !runtime
-              ) : (
-                <span></span>
+                </>
               )}
               <p className="mt-3 text-sm">{details?.overview}</p>
             </div>
@@ -101,7 +97,7 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
                 <li>
                   <span className="text-sm text-[#777777]">Diễn viên: </span>
                   {someActors?.slice(0, 3).map((ele, idx) => (
-                    <span key={idx} className={`${styles.link} text-sm`}>
+                    <span key={idx} className="comma text-sm">
                       <Link href="#" className="hover:underline">
                         {ele}
                       </Link>
@@ -111,7 +107,7 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
                 <li>
                   <span className="text-sm text-[#777777]">Thể loại: </span>
                   {someGenres?.slice(0, 3).map((ele, idx) => (
-                    <span key={idx} className={`${styles.link} text-sm`}>
+                    <span key={idx} className="comma text-sm">
                       <Link href="#" className="hover:underline">
                         {ele}
                       </Link>
@@ -127,4 +123,4 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
   );
 };
 
-export default memo(PreviewModal);
+export default PreviewModal;

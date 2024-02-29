@@ -2,7 +2,6 @@
 import styles from './navbar.module.scss';
 import { useState } from 'react';
 import { cn } from '~/utils/misc';
-import { isMobileOnly } from 'react-device-detect';
 import Link from 'next/link';
 
 const NavBar = () => {
@@ -50,7 +49,10 @@ const NavBar = () => {
                 <span className="ml-3">Trang chủ</span>
               </Link>
             </li>
-            <li className={styles.navTab}>Phim</li>
+            <Link className="inline-flex align-middle" href="/movies">
+              <li className={styles.navTab}>Phim</li>
+            </Link>
+
             <li className={styles.navTab}>Mới & Phổ biến</li>
             <li className={styles.navTab}>Danh sách của tôi</li>
           </ul>

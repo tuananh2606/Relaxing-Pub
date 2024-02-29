@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next-nprogress-bar';
 import { fetcher } from '~/utils/fetcher';
 import type { Provider } from '~/services/providers.server';
 import { DialogHeader, DialogTitle } from '../elements/Dialog';
@@ -8,7 +8,7 @@ interface ISelectProvidersDialog {
   id: string;
   visible: boolean;
   setIsOpenProviderModal: Dispatch<SetStateAction<boolean>>;
-  setIsPlaying: Dispatch<SetStateAction<boolean>>;
+  setIsPlaying?: Dispatch<SetStateAction<boolean>>;
   type: 'movie' | 'tv' | 'anime' | 'people';
   title: string;
   origTitle: string;
@@ -92,7 +92,7 @@ const SelectProvidersDialog = (props: ISelectProvidersDialog) => {
 
   const closePreviewModal = useCallback(() => {
     setIsOpenProviderModal(false);
-    setIsPlaying(true);
+    //setIsPlaying(true);
   }, []);
 
   return (

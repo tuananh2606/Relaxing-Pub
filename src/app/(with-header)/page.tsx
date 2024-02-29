@@ -8,6 +8,7 @@ import {
 } from '~/services/tmdb/tmdb.server';
 import dynamic from 'next/dynamic';
 const HeroVideo = dynamic(() => import('~/components/Home/HeroSection/HeroVideo'));
+import HeroSection from '~/components/Home/HeroSection/HeroSection';
 import { IMedia } from '~/types/media';
 import TrendingCarousel from '~/components/Home/Main/TrendingCarousel';
 
@@ -34,9 +35,12 @@ export default async function Home() {
   };
 
   return (
-    <main className="my-16 min-h-screen lg:mt-0">
-      <HeroVideo items={data} />
-      <TrendingCarousel items={items} />
+    <main className="my-16 lg:mt-0">
+      {/* <HeroVideo items={data} /> */}
+      <HeroSection items={data} />
+      <div className="">
+        <TrendingCarousel items={items} />
+      </div>
     </main>
   );
 }

@@ -238,6 +238,16 @@ export const getCredits = async (type: 'movie' | 'tv', id: number): Promise<ICre
   }
 };
 
+export const getRecommendation = async (
+  type: 'movie' | 'tv',
+  id: number,
+  page?: number,
+  language?: string,
+): Promise<IMediaList> => {
+  const url = TMDB.recommendationUrl(type, id, page, language);
+  return getListFromTMDB(url);
+};
+
 export const getListGenre = async (type: 'movie' | 'tv', language?: string): Promise<{ [id: string]: string }> => {
   const url = TMDB.listGenre(type, language);
   try {

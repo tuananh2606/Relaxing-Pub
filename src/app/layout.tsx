@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import Footer from '~/layouts/footer/Footer';
+import { ProviderTopLoader, Providers } from '~/utils';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin', 'vietnamese'] });
 
 export const metadata: Metadata = {
   title: 'Film Pub',
@@ -13,9 +13,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-primary`}>
-        {children}
-        <Footer />
+      <body className={`${inter.className} dark`}>
+        <Providers>
+          <ProviderTopLoader>{children}</ProviderTopLoader>
+        </Providers>
       </body>
     </html>
   );

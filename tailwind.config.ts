@@ -1,5 +1,8 @@
+// prettier-ignore
 import type { Config } from 'tailwindcss';
 const colors = require('tailwindcss/colors');
+const { withTV } = require('tailwind-variants/transformer');
+const { nextui } = require('@nextui-org/react');
 
 const config: Config = {
   content: [
@@ -7,6 +10,7 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/layouts/**/*.{js,ts,jsx,tsx,mdx}',
+    './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     colors: {
@@ -15,11 +19,26 @@ const config: Config = {
       black: colors.black,
       white: colors.white,
       gray: colors.gray,
-      primary: '#141414',
-      secondary: 'rgba(109, 109, 110, 0.7)',
       'header-bg': '#000000',
     },
     extend: {
+      colors: {
+        'movie-brand-color': 'var(--theme-movie-brand)',
+      },
+      // prettier-ignore
+      gridTemplateAreas: {
+        'details-mobile': [
+          "poster title",
+          "poster title",
+          "info info",
+          "buttons buttons",
+        ],
+        'details': [
+          "poster title",
+          "poster info",
+          "poster buttons",
+        ],
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
@@ -78,6 +97,36 @@ const config: Config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  darkMode: 'class',
+  plugins: [
+    nextui({
+      themes: {
+        dark: {
+          colors: {
+            background: '#0D001A',
+            foreground: '#ffffff',
+            secondary: '#6d6d6eb3',
+            primary: {
+              50: '#3B096C',
+              100: '#1D2125',
+              200: '#22272B',
+              300: '#2C333A',
+              400: '#454F59',
+              500: '#596773',
+              600: '#738496',
+              700: '#8C9BAB',
+              800: '#9FADBC',
+              900: '#B6C2CF',
+              DEFAULT: '#101214',
+              foreground: '#ffffff',
+            },
+            focus: '#F182F6',
+          },
+        },
+      },
+    }),
+    require('tailwindcss-animate'),
+    require('@savvywombat/tailwindcss-grid-areas'),
+  ],
 };
-export default config;
+export default withTV(config);

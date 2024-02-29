@@ -11,10 +11,10 @@ interface Carousel {
   className?: string;
   options?: EmblaOptionsType;
   children: React.ReactNode;
+  slidePerView?: number;
 }
 
-type CarouselSlide = Pick<Carousel, 'className' | 'children'>;
-
+type CarouselSlide = Pick<Carousel, 'className' | 'children' | 'slidePerView'>;
 const Carousel = ({ className, options, children, ...props }: Carousel) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(options);
 
@@ -27,7 +27,7 @@ const Carousel = ({ className, options, children, ...props }: Carousel) => {
   }, [emblaApi]);
 
   return (
-    <div className="relative">
+    <div className={cn('relative', className)}>
       <button
         className="absolute left-0 top-[50%] z-10 hidden rounded-full bg-gray-950 p-1 md:block"
         onClick={scrollPrev}
@@ -35,7 +35,7 @@ const Carousel = ({ className, options, children, ...props }: Carousel) => {
         <ChevronLeftIcon width={30} height={30} />
       </button>
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className={cn(styles.embla__container, className)} {...props}>
+        <div className={cn(styles.embla__container)} {...props}>
           {children}
         </div>
       </div>
@@ -145,7 +145,8 @@ const CarouselParallax = ({ className, options, children, ...props }: Carousel) 
   );
 };
 
-const CarouselSlide = ({ className, children }: CarouselSlide) => {
+const CarouselSlide = ({ className, children, slidePerView }: CarouselSlide) => {
+  let slide = `flex-[0_0_calc(100%_/_${slidePerView})]`;
   return <div className={cn(styles.embla__slide, className)}>{children}</div>;
 };
 export { Carousel, CarouselSlide, CarouselParallax };
