@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ReactPlayer from 'react-player/lazy';
 
-import VideoSkeleton from '../ui/Skeleton/VideoSkeleton';
+import { VideoSkeleton } from '../ui/Skeleton';
 import AspectRatio from '../shared/AspectRatio';
 import ImageWithFallback from '../shared/ImageWithFallback';
 
