@@ -1,4 +1,4 @@
-import VideoSkeleton from '~/components/ui/Skeleton/VideoSkeleton';
+import { VideoSkeleton } from '~/components/ui/Skeleton';
 
 export default function Loading() {
   return <VideoSkeleton />;
