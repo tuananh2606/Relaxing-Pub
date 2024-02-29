@@ -7,7 +7,6 @@ import {
   getTvShowDetail,
 } from '~/services/tmdb/tmdb.server';
 import dynamic from 'next/dynamic';
-const HeroVideo = dynamic(() => import('~/components/Home/HeroSection/HeroVideo'));
 import HeroSection from '~/components/Home/HeroSection/HeroSection';
 import { IMedia } from '~/types/media';
 import TrendingCarousel from '~/components/Home/Main/TrendingCarousel';
