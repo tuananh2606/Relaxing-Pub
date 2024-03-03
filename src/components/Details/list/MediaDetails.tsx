@@ -361,11 +361,11 @@ export const MediaBackgroundImage = (props: IMediaBackground) => {
   return (
     <div
       ref={backgroundRef}
-      className="relative z-[2] aspect-[2/1] h-[var(--heigt-bg-movie)] w-[var(--width-bg-movie)] bg-fixed bg-right-top bg-no-repeat"
+      className="relative z-[2] aspect-[2/1] h-[var(--height-bg-movie)] w-[var(--width-bg-movie)] bg-fixed bg-right-top bg-no-repeat"
       style={
         {
           '--width-bg-movie': size?.width,
-          '--heigt-bg-movie': size?.height,
+          '--height-bg-movie': size?.height,
           backgroundImage: `url("${backdropPath}")`,
           backgroundSize: `${size ? size?.width + 'px' : '100%'}`,
         } as CSSProperties
