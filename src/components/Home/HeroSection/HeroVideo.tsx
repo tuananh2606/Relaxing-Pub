@@ -144,13 +144,6 @@ const HeroVideo = ({ items }: IHeroVideo) => {
           )}
         </button>
       </div>
-      {isOpenModal && (
-        <PreviewModal
-          items={{ credits: credits, details: details }}
-          setIsOpenModal={setIsOpenModal}
-          setIsPlaying={setIsPlaying}
-        />
-      )}
     </div>
   );
 };

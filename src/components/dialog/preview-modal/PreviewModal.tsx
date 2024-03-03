@@ -1,24 +1,23 @@
-import { Dispatch, SetStateAction } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 import Link from 'next/link';
-
 import { ConvertToHourAndMinutes } from '~/utils';
 import styles from './preview-modal.module.scss';
 import { ICredit, IMovieDetail, ITvShowDetail } from '~/services/tmdb/tmdb.types';
-import PreviewModalSkeleton from '../../ui/Skeleton/PreviewModalSkeleton';
-import ImageWithFallback from '../../shared/ImageWithFallback';
+import Image from 'next/image';
+import { Image as NextUIImage } from '@nextui-org/react';
+import { IMediaState } from '~/components/Home/Main/TrendingCarousel';
+import { getCredits, getMovieDetail, getTvShowDetail } from '~/services/tmdb/tmdb.server';
+import { useMeasure } from '@react-hookz/web';
 
 interface IPreviewModal {
-  items: {
-    credits: ICredit | undefined;
-    details: IMovieDetail | ITvShowDetail | undefined;
-  };
-
-  setIsOpenModal: Dispatch<SetStateAction<boolean>>;
-  setIsPlaying?: Dispatch<SetStateAction<boolean>>;
+  media: IMediaState | undefined;
 }
 
-const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) => {
-  const { credits, details } = items;
+const PreviewModal = ({ media }: IPreviewModal) => {
+  const [credits, setCredits] = useState<ICredit>();
+  const [details, setDetails] = useState<IMovieDetail | ITvShowDetail>();
+  const [sizeWrapper, wrapperRef] = useMeasure<HTMLDivElement>();
+  const [size, backgroundRef] = useMeasure<HTMLDivElement>();
   const { cast } = credits ?? {};
   const { genres } = details ?? {};
 
@@ -42,43 +41,62 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
     .getFullYear()
     .toString();
   const url = details?.backdrop_path ? `${process.env.NEXT_PUBLIC_URL_IMAGES}${details?.backdrop_path}` : '';
-  const closePreviewModal = () => {
-    setIsOpenModal(false);
-    setIsPlaying && setIsPlaying(true);
-  };
-  console.log(runtime);
-  console.log(episodes);
+
+  useEffect(() => {
+    const getData = () => {
+      if (media) {
+        const creditsData = getCredits(media?.mediaType as any, media?.id as number);
+        const detailsData =
+          media?.mediaType === 'movie' ? getMovieDetail(media?.id as number) : getTvShowDetail(media?.id as number);
+
+        Promise.all([creditsData, detailsData])
+          .then(([credits, details]) => {
+            setCredits(credits);
+            setDetails(details);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    };
+
+    getData();
+  }, [media]);
+  const sizeContent = sizeWrapper && size && sizeWrapper.height - size.height;
+
   return (
-    <div className="fixed left-0 top-0 z-40 flex h-full w-full items-center justify-center">
-      <div className="previewMpdel-backdrop fixed inset-0 z-20 h-full w-full bg-black opacity-70 transition-opacity"></div>
-      <div className="relative z-30 mx-4 h-fit w-auto max-w-[850px] animate-scale-in-center rounded-md bg-[#181818] pb-9 md:mx-8">
-        <div className="image-wrapper relative  w-full ">
-          {url && (
-            <ImageWithFallback
-              src={`${process.env.NEXT_PUBLIC_URL_IMAGES}${details!.backdrop_path}`}
-              alt="Anh"
-              width={0}
-              height={0}
-              sizes="100vw"
-              className="h-auto w-full rounded-t-md"
-            />
-          )}
+    <div className="h-full w-full" ref={wrapperRef}>
+      <div className="relative" ref={backgroundRef}>
+        {url && (
+          <NextUIImage
+            as={Image}
+            src={url}
+            alt="Anh"
+            width={0}
+            height={0}
+            radius="none"
+            sizes="100vw"
+            fallbackSrc="https://via.placeholder.com/300x200"
+            className="h-auto w-full rounded-t-md"
+            classNames={{
+              wrapper: '!max-w-full',
+            }}
+          />
+        )}
 
-          <div className={`${styles.imageWrapper} absolute top-0 h-full w-full`}></div>
-        </div>
-
-        <div className="close-btn absolute right-0 top-0 m-[1em]">
-          <button className="rounded-full bg-[#181818] p-[2px]" onClick={closePreviewModal}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 25" fill="none">
-              <path
-                d="M12.0007 10.9002L16.9504 5.95044L18.3646 7.36465L13.4149 12.3144L18.3646 17.2641L16.9504 18.6783L12.0007 13.7286L7.05093 18.6783L5.63672 17.2641L10.5865 12.3144L5.63672 7.36465L7.05093 5.95044L12.0007 10.9002Z"
-                fill="white"
-              />
-            </svg>
-          </button>
-        </div>
-        <div className="px-12 py-3">
-          <div className="grid gap-4 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] md:gap-8">
+        <div className={`${styles.imageWrapper} absolute top-0 h-full w-full`}></div>
+      </div>
+      {details && sizeContent ? (
+        <div
+          className="min-h-[300px] overflow-y-auto scroll-smooth px-8 py-3 md:min-h-fit"
+          style={
+            {
+              '--height-bg-movie': sizeContent,
+              height: `${sizeContent + 'px'}`,
+            } as CSSProperties
+          }
+        >
+          <div className="flex flex-col ">
             <div>
               <span>{releaseYear}</span>
 
@@ -90,8 +108,8 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
                   <span> ‧ {seasons > 0 ? seasons + ' seasons' : seasons + ' season'}</span>
                 </>
               )}
-              <p className="mt-3 text-sm">{details?.overview}</p>
             </div>
+            <p className="mt-3 text-sm">{details?.overview}</p>
             <div>
               <ul>
                 <li>
@@ -118,7 +136,14 @@ const PreviewModal = ({ setIsOpenModal, setIsPlaying, items }: IPreviewModal) =>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div role="status" className="mt-5 max-w-sm animate-pulse">
+          <div className="mb-4 h-14 w-full rounded-xl bg-gray-200 dark:bg-gray-700" />
+          <div className="mb-2 h-12 w-full rounded-xl bg-gray-200 dark:bg-gray-700" />
+          <div className="mb-2 h-12 w-full rounded-xl bg-gray-200 dark:bg-gray-700" />
+          <span className="sr-only">Loading...</span>
+        </div>
+      )}
     </div>
   );
 };
