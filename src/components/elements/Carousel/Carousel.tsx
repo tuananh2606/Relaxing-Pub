@@ -11,7 +11,7 @@ interface Carousel {
   className?: string;
   options?: EmblaOptionsType;
   children: React.ReactNode;
-  slidePerView?: number;
+  slidePerView?: string;
 }
 
 type CarouselSlide = Pick<Carousel, 'className' | 'children' | 'slidePerView'>;
@@ -145,8 +145,8 @@ const CarouselParallax = ({ className, options, children, ...props }: Carousel) 
   );
 };
 
-const CarouselSlide = ({ className, children, slidePerView }: CarouselSlide) => {
-  let slide = `flex-[0_0_calc(100%_/_${slidePerView})]`;
+const CarouselSlide = ({ className, children, slidePerView = '2' }: CarouselSlide) => {
+  let slide = slidePerView ? `!flex-[0_0_calc(100%_/_${slidePerView})]` : `!flex-[0_0_calc(100%_/_2)]`;
   return <div className={cn(styles.embla__slide, className)}>{children}</div>;
 };
 export { Carousel, CarouselSlide, CarouselParallax };
