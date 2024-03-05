@@ -15,7 +15,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-[9998] cursor-pointer bg-black/[0.6] backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      'fixed inset-0 z-30 grid cursor-pointer place-items-center overflow-y-auto bg-black/[0.6] backdrop-blur-sm',
       className,
     )}
     {...props}
@@ -36,36 +36,37 @@ const DialogContent = React.forwardRef<
   }
 >(({ className, classNames, children, hideCloseButton, container, ...props }, ref) => (
   <DialogPortal container={container}>
-    <DialogOverlay className={cn(classNames?.overlay)} />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        'border-default-100 shadow-medium fixed left-1/2 top-1/2 z-[9999] mt-[-5vh] max-h-[85vh] min-h-[150px] min-w-[250px] translate-x-[-50%] translate-y-[-50%] rounded-xl border bg-[#181818] !p-6 will-change-transform focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',
-        className ? className : classNames?.content,
-      )}
-      {...props}
-    >
-      {children}
-      {!hideCloseButton ? (
-        <DialogPrimitive.Close
-          asChild
-          className={cn(
-            'ring-offset-background focus:ring-primary-200 absolute right-4 top-4 flex h-5 w-5 items-center justify-center rounded-md opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none',
-            classNames?.closeButton,
-          )}
-        >
-          <button aria-label="Close">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 25" fill="none">
-              <path
-                d="M12.0007 10.9002L16.9504 5.95044L18.3646 7.36465L13.4149 12.3144L18.3646 17.2641L16.9504 18.6783L12.0007 13.7286L7.05093 18.6783L5.63672 17.2641L10.5865 12.3144L5.63672 7.36465L7.05093 5.95044L12.0007 10.9002Z"
-                fill="white"
-              />
-            </svg>
-            <span className="sr-only">Close</span>
-          </button>
-        </DialogPrimitive.Close>
-      ) : null}
-    </DialogPrimitive.Content>
+    <DialogOverlay className={cn(classNames?.overlay)}>
+      <DialogPrimitive.Content
+        ref={ref}
+        className={cn(
+          'rounded-xl border border-default-100 bg-[#181818] !p-6 shadow-medium will-change-transform focus:outline-none',
+          className ? className : classNames?.content,
+        )}
+        {...props}
+      >
+        {children}
+        {!hideCloseButton ? (
+          <DialogPrimitive.Close
+            asChild
+            className={cn(
+              'absolute right-4 top-4 z-20 flex h-5 w-5 items-center justify-center rounded-md opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:ring-offset-2 disabled:pointer-events-none',
+              classNames?.closeButton,
+            )}
+          >
+            <button aria-label="Close">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 25" fill="none">
+                <path
+                  d="M12.0007 10.9002L16.9504 5.95044L18.3646 7.36465L13.4149 12.3144L18.3646 17.2641L16.9504 18.6783L12.0007 13.7286L7.05093 18.6783L5.63672 17.2641L10.5865 12.3144L5.63672 7.36465L7.05093 5.95044L12.0007 10.9002Z"
+                  fill="white"
+                />
+              </svg>
+              <span className="sr-only">Close</span>
+            </button>
+          </DialogPrimitive.Close>
+        ) : null}
+      </DialogPrimitive.Content>
+    </DialogOverlay>
   </DialogPortal>
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;
@@ -96,7 +97,7 @@ const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
-  <DialogPrimitive.Description ref={ref} className={cn('text-foreground/60 text-sm', className)} {...props} />
+  <DialogPrimitive.Description ref={ref} className={cn('text-sm text-foreground/60', className)} {...props} />
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
