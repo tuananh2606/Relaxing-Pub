@@ -8,6 +8,7 @@ import { Image as NextUIImage } from '@nextui-org/react';
 import { IMediaState } from '~/components/Home/Main/TrendingCarousel';
 import { getCredits, getMovieDetail, getTvShowDetail } from '~/services/tmdb/tmdb.server';
 import { useMeasure } from '@react-hookz/web';
+import { TMDB } from '~/services/tmdb/utils.server';
 
 interface IPreviewModal {
   media: IMediaState | undefined;
@@ -16,8 +17,6 @@ interface IPreviewModal {
 const PreviewModal = ({ media }: IPreviewModal) => {
   const [credits, setCredits] = useState<ICredit>();
   const [details, setDetails] = useState<IMovieDetail | ITvShowDetail>();
-  const [sizeWrapper, wrapperRef] = useMeasure<HTMLDivElement>();
-  const [size, backgroundRef] = useMeasure<HTMLDivElement>();
   const { cast } = credits ?? {};
   const { genres } = details ?? {};
 
@@ -40,7 +39,7 @@ const PreviewModal = ({ media }: IPreviewModal) => {
   )
     .getFullYear()
     .toString();
-  const url = details?.backdrop_path ? `${process.env.NEXT_PUBLIC_URL_IMAGES}${details?.backdrop_path}` : '';
+  const backdropPath = details && TMDB.backdropUrl((details as IMovieDetail | ITvShowDetail).backdrop_path!, 'w1280');
 
   useEffect(() => {
     const getData = () => {
@@ -62,15 +61,14 @@ const PreviewModal = ({ media }: IPreviewModal) => {
 
     getData();
   }, [media]);
-  const sizeContent = sizeWrapper && size && sizeWrapper.height - size.height;
 
   return (
-    <div className="h-full w-full" ref={wrapperRef}>
-      <div className="relative" ref={backgroundRef}>
-        {url && (
+    <div className="h-full w-full">
+      <div className="relative">
+        {backdropPath && (
           <NextUIImage
             as={Image}
-            src={url}
+            src={backdropPath}
             alt="Anh"
             width={0}
             height={0}
@@ -84,18 +82,10 @@ const PreviewModal = ({ media }: IPreviewModal) => {
           />
         )}
 
-        <div className={`${styles.imageWrapper} absolute top-0 h-full w-full`}></div>
+        <div className={`${styles.imageWrapper} absolute top-0 z-20 h-full w-full`}></div>
       </div>
-      {details && sizeContent ? (
-        <div
-          className="min-h-[300px] overflow-y-auto scroll-smooth px-8 py-3 md:min-h-fit"
-          style={
-            {
-              '--height-bg-movie': sizeContent,
-              height: `${sizeContent + 'px'}`,
-            } as CSSProperties
-          }
-        >
+      {details ? (
+        <div className=" px-8 py-3">
           <div className="flex flex-col ">
             <div>
               <span>{releaseYear}</span>
@@ -137,8 +127,8 @@ const PreviewModal = ({ media }: IPreviewModal) => {
           </div>
         </div>
       ) : (
-        <div role="status" className="mt-5 max-w-sm animate-pulse">
-          <div className="mb-4 h-14 w-full rounded-xl bg-gray-200 dark:bg-gray-700" />
+        <div role="status" className="m-5 w-full animate-pulse">
+          <div className="mb-4 h-20 w-full rounded-xl bg-gray-200 dark:bg-gray-700" />
           <div className="mb-2 h-12 w-full rounded-xl bg-gray-200 dark:bg-gray-700" />
           <div className="mb-2 h-12 w-full rounded-xl bg-gray-200 dark:bg-gray-700" />
           <span className="sr-only">Loading...</span>

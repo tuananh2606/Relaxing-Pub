@@ -1,1 +1,1 @@
-export { Carousel, CarouselSlide, CarouselParallax } from './Carousel';
+export { Carousel, CarouselSlide, CarouselContent } from './Carousel';
