@@ -280,10 +280,13 @@ export class TMDB {
 
   static discoverUrl = (
     type: 'movie' | 'tv',
-    with_genres?: string,
+    includeAdult?: boolean,
     sort_by?: string,
     language?: string,
     page?: number,
+    primaryReleaseYear?: number,
+    primaryReleaseDateLte?: string,
+    primaryReleaseDateGte?: string,
     releaseDateGte?: string,
     releaseDateLte?: string,
     firstAirDateGte?: string,
@@ -304,14 +307,23 @@ export class TMDB {
     withType?: string,
     airDateGte?: string,
     airDateLte?: string,
-  ) => {
+    with_genres?: string,
+  ): string => {
     let url = `${this.API_BASE_URL}/discover/${type}?api_key=${this.key}`;
 
     if (with_genres) url += `&with_genres=${with_genres}`;
+    if (includeAdult) {
+      url += `&include_adult=true`;
+    } else {
+      url += `&include_adult=false`;
+    }
     if (sort_by) url += `&sort_by=${sort_by}`;
     if (language) url += `&language=${language}`;
     if (page) url += `&page=${page}`;
     if (withOriginalLanguage) url += `&with_original_language=${withOriginalLanguage}`;
+    if (primaryReleaseYear) url += `&primary_release_year=${primaryReleaseYear}`;
+    if (primaryReleaseDateGte) url += `&primary_release_date.gte=${primaryReleaseDateGte}`;
+    if (primaryReleaseDateLte) url += `&primary_release_date.lte=${primaryReleaseDateLte}`;
     if (releaseDateGte) url += `&release_date.gte=${releaseDateGte}`;
     if (releaseDateLte) url += `&release_date.lte=${releaseDateLte}`;
     if (firstAirDateGte) url += `&first_air_date.gte=${firstAirDateGte}`;

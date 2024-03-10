@@ -3,8 +3,7 @@ import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useMeasure, useMediaQuery } from '@react-hookz/web';
 import { Image as NextUIImage } from '@nextui-org/image';
-import { Button, Chip, Tabs, Tab, Card, CardBody, CardHeader } from '@nextui-org/react';
-import Image from 'next/image';
+import { Button, Chip, Tabs, Tab, Card, CardBody } from '@nextui-org/react';
 
 import { fetcher } from '~/utils/fetcher';
 import { ColorPalette } from '~/app/api/colors-palette/route';
@@ -12,8 +11,7 @@ import { ICredit, IMediaList, IMovieDetail, ITvShowDetail } from '~/services/tmd
 import { TMDB } from '~/services/tmdb/utils.server';
 import tinycolor from 'tinycolor2';
 import Overview from '../item/Overview';
-import { Carousel, CarouselSlide } from '~/components/elements/Carousel';
-import Link from 'next/link';
+import MediaCarousel from './MediaCarousel';
 import { ConvertToHourAndMinutes } from '~/utils';
 
 interface IMediaDetails {
@@ -254,70 +252,10 @@ export const MediaDetails = (props: IMediaDetails) => {
                 </CardBody>
               </Card>
               <div className="m-3">
-                <h1 className="my-3 pl-2 text-2xl font-bold">Top Cast</h1>
-                <Carousel options={{ align: 'start', dragFree: true }} className="">
-                  {credits?.cast.slice(0, 10).map((actor, idx) => {
-                    const profilePath = TMDB?.profileUrl(actor.profile_path, 'w185');
-                    return (
-                      <CarouselSlide key={idx}>
-                        <Card>
-                          <CardBody className="overflow-visible !p-0">
-                            <NextUIImage
-                              as={Image}
-                              alt="Anh"
-                              src={profilePath || ''}
-                              sizes="100vw"
-                              width={400}
-                              height={600}
-                              className="h-auto w-full rounded-lg"
-                            />
-                          </CardBody>
-                          <CardHeader className="min-h-[5.875rem] flex-col items-start px-4">
-                            <p className="line-clamp-2 font-bold">{actor.name}</p>
-                            <p className="line-clamp-2 text-sm text-foreground/60">{actor.character}</p>
-                          </CardHeader>
-                        </Card>
-                      </CarouselSlide>
-                    );
-                  })}
-                </Carousel>
+                <MediaCarousel title="Top Cast" items={credits?.cast} />
               </div>
               <div className="m-3">
-                <h1 className="my-3 pl-2 text-2xl font-bold">Recommendations</h1>
-                <Carousel options={{ align: 'start', dragFree: true }} className="">
-                  {recommendations?.items!.slice(0, 10).map((recommendation, idx) => {
-                    return (
-                      <CarouselSlide key={idx}>
-                        <Card>
-                          <CardBody className="overflow-visible !p-0">
-                            <NextUIImage
-                              as={Image}
-                              alt="Anh"
-                              src={recommendation.posterPath || ''}
-                              sizes="100vw"
-                              width={400}
-                              height={600}
-                              className="h-full w-full rounded-lg"
-                            />
-                          </CardBody>
-                          <CardHeader className="min-h-[4.875rem] flex-col items-start px-4">
-                            <span className="line-clamp-2 font-bold">{recommendation.title as string}</span>
-                          </CardHeader>
-                        </Card>
-                        {/* <div className="z-10">
-                          <NextUIImage
-                            as={Image}
-                            alt="Anh"
-                            src={recommendation.posterPath || ''}
-                            width={150}
-                            height={200}
-                            className="h-auto w-full rounded-lg"
-                          />
-                        </div> */}
-                      </CarouselSlide>
-                    );
-                  })}
-                </Carousel>
+                <MediaCarousel title="Recommendations" items={recommendations?.results} />
               </div>
             </Tab>
             <Tab key="cast" title="Cast">

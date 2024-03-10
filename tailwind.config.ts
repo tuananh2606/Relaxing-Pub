@@ -19,6 +19,8 @@ const config: Config = {
       black: colors.black,
       white: colors.white,
       gray: colors.gray,
+      orange: colors.orange,
+      amber: colors.amber,
       'header-bg': '#000000',
     },
     extend: {
@@ -101,11 +103,11 @@ const config: Config = {
   plugins: [
     nextui({
       themes: {
-        dark: {
+        light: {
           colors: {
-            background: '#0D001A',
-            foreground: '#ffffff',
-            secondary: '#6d6d6eb3',
+            background: '#FAF3E1',
+            foreground: '#F5E7C6',
+            secondary: '#FF6D1F',
             primary: {
               50: '#3B096C',
               100: '#1D2125',
@@ -117,10 +119,32 @@ const config: Config = {
               700: '#8C9BAB',
               800: '#9FADBC',
               900: '#B6C2CF',
-              DEFAULT: '#101214',
+              DEFAULT: '#222222',
               foreground: '#ffffff',
             },
-            focus: '#F182F6',
+            focus: '#222222',
+          },
+        },
+        dark: {
+          colors: {
+            background: '#221F1F',
+            foreground: '#F5F5F1',
+            secondary: '#B81D24',
+            primary: {
+              50: '#3B096C',
+              100: '#1D2125',
+              200: '#22272B',
+              300: '#2C333A',
+              400: '#454F59',
+              500: '#596773',
+              600: '#738496',
+              700: '#8C9BAB',
+              800: '#9FADBC',
+              900: '#B6C2CF',
+              DEFAULT: '#E50914',
+              foreground: '#ffffff',
+            },
+            focus: '#ffffff',
           },
         },
       },
