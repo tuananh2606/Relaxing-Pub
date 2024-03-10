@@ -14,7 +14,7 @@ export function CardSkeleton({ className }: { className?: string }) {
 
 export const HomePageSkeleton = () => {
   return (
-    <div className="mt-16 px-2">
+    <div className="mt-16">
       <div
         className="relative flex h-[56.25vw] w-full flex-col items-center justify-center overflow-hidden bg-gray-500/80 p-4
       before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent md:min-h-screen"

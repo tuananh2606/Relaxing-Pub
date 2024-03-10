@@ -26,10 +26,10 @@
     color: rgb(var(--foreground-rgb));
     background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
   }
-  /* 
+
   * {
     scrollbar-width: thin;
-  } */
+  }
 
   /* Customize scrollbar */
   /* Webkit (Chrome, Safari, Opera) */
@@ -100,5 +100,17 @@
 
   .comma:not(:last-child)::after {
     content: ', ';
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 }

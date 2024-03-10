@@ -5,7 +5,7 @@ import styles from './preview-modal.module.scss';
 import { ICredit, IMovieDetail, ITvShowDetail } from '~/services/tmdb/tmdb.types';
 import Image from 'next/image';
 import { Image as NextUIImage } from '@nextui-org/react';
-import { IMediaState } from '~/components/Home/Main/TrendingCarousel';
+import { IMediaState } from '~/components/Home/Main/MainCarousel';
 import { getCredits, getMovieDetail, getTvShowDetail } from '~/services/tmdb/tmdb.server';
 import { useMeasure } from '@react-hookz/web';
 import { TMDB } from '~/services/tmdb/utils.server';
@@ -127,7 +127,7 @@ const PreviewModal = ({ media }: IPreviewModal) => {
           </div>
         </div>
       ) : (
-        <div role="status" className="m-5 w-full animate-pulse">
+        <div role="status" className="w-full animate-pulse p-2">
           <div className="mb-4 h-20 w-full rounded-xl bg-gray-200 dark:bg-gray-700" />
           <div className="mb-2 h-12 w-full rounded-xl bg-gray-200 dark:bg-gray-700" />
           <div className="mb-2 h-12 w-full rounded-xl bg-gray-200 dark:bg-gray-700" />

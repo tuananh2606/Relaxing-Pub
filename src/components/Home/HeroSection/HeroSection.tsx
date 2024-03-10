@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { IAnimeInfo, IMovieInfo } from '@consumet/extensions';
 import Link from 'next/link';
-import { Chip } from '@nextui-org/react';
+import { Button, Chip } from '@nextui-org/react';
 import Image from 'next/image';
 import { Image as NextUIImage } from '@nextui-org/react';
 
@@ -73,7 +73,11 @@ const HeroSection = ({ items }: IHeroSection) => {
                     {(status === 'Released' || status === 'Ended' || status === 'Returning Series') && (
                       <Dialog open={isOpenProviderModal} onOpenChange={openProviderModalHandle}>
                         <DialogTrigger asChild>
-                          <button className="mr-3 flex items-center justify-center rounded-[4px] bg-white px-2 py-2 transition hover:bg-[rgba(255,255,255,0.75)] md:px-7">
+                          <Button
+                            size="lg"
+                            radius="sm"
+                            className="mr-3 flex items-center justify-center bg-white px-2 py-2 transition md:px-7"
+                          >
                             <span>
                               <svg
                                 className="h-6 w-6 md:h-8 md:w-8"
@@ -88,7 +92,7 @@ const HeroSection = ({ items }: IHeroSection) => {
                               </svg>
                             </span>
                             <span className="ml-1 text-sm text-black md:text-lg">Play</span>
-                          </button>
+                          </Button>
                         </DialogTrigger>
                         <DialogContent>
                           <SelectProvidersDialog
@@ -107,24 +111,27 @@ const HeroSection = ({ items }: IHeroSection) => {
                       </Dialog>
                     )}
 
-                    <Link
-                      href={`${type}/${details?.id}`}
-                      className="flex min-w-fit items-center justify-center rounded-[4px] bg-secondary px-2 py-2 transition hover:bg-[rgba(109,109,110,0.4)] md:px-7 "
-                    >
-                      <span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6 md:h-8 md:w-8"
-                          viewBox="0 0 24 25"
-                          fill="none"
-                        >
-                          <path
-                            d="M12 22.3137C6.47715 22.3137 2 17.8365 2 12.3137C2 6.79087 6.47715 2.31372 12 2.31372C17.5228 2.31372 22 6.79087 22 12.3137C22 17.8365 17.5228 22.3137 12 22.3137ZM12 20.3137C16.4183 20.3137 20 16.732 20 12.3137C20 7.89544 16.4183 4.31372 12 4.31372C7.58172 4.31372 4 7.89544 4 12.3137C4 16.732 7.58172 20.3137 12 20.3137ZM11 7.31372H13V9.31372H11V7.31372ZM11 11.3137H13V17.3137H11V11.3137Z"
-                            fill="white"
-                          />
-                        </svg>
-                      </span>
-                      <span className="ml-1 text-sm text-white md:text-lg">Thông tin khác</span>
+                    <Link href={`${type}/${details?.id}`}>
+                      <Button
+                        size="lg"
+                        radius="sm"
+                        className="flex min-w-fit items-center justify-center bg-secondary px-2 py-2 transition  md:px-7 "
+                      >
+                        <span>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-6 w-6 md:h-8 md:w-8"
+                            viewBox="0 0 24 25"
+                            fill="none"
+                          >
+                            <path
+                              d="M12 22.3137C6.47715 22.3137 2 17.8365 2 12.3137C2 6.79087 6.47715 2.31372 12 2.31372C17.5228 2.31372 22 6.79087 22 12.3137C22 17.8365 17.5228 22.3137 12 22.3137ZM12 20.3137C16.4183 20.3137 20 16.732 20 12.3137C20 7.89544 16.4183 4.31372 12 4.31372C7.58172 4.31372 4 7.89544 4 12.3137C4 16.732 7.58172 20.3137 12 20.3137ZM11 7.31372H13V9.31372H11V7.31372ZM11 11.3137H13V17.3137H11V11.3137Z"
+                              fill="white"
+                            />
+                          </svg>
+                        </span>
+                        <span className="ml-1 text-sm text-white md:text-lg">Thông tin khác</span>
+                      </Button>
                     </Link>
                   </div>
                 </div>
