@@ -35,7 +35,7 @@ const getListFromTMDB = async (
 ): Promise<IMediaList> => {
   try {
     const fetched = await fetcher<{
-      items?: IMedia[];
+      results?: IMedia[];
       page: number;
       total_pages: number;
       total_results: number;
@@ -46,12 +46,12 @@ const getListFromTMDB = async (
     return {
       page: fetched.page,
       total_pages: fetched.total_pages,
-      items: [...postFetchDataHandler(fetched, type)],
+      results: [...postFetchDataHandler(fetched, type)],
       total_results: fetched.total_results,
     } as IMediaList;
   } catch (error) {
     console.error(error);
-    return { page: 0, total_pages: 0, items: [], total_results: 0 };
+    return { page: 0, total_pages: 0, results: [], total_results: 0 };
   }
 };
 /* ============================================Config Field=========================================== */
@@ -137,6 +137,29 @@ export const getMovieDetail = async (id: number, language?: string): Promise<IMo
       url,
     });
     return res;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getLatest = async (mediaType: 'movie' | 'tv', page: number = 1): Promise<IMediaList | undefined> => {
+  try {
+    const sort_by = 'popularity.desc';
+    let currentDate = new Date();
+    const includeAdult = false;
+    const primaryReleaseYear = currentDate.getFullYear();
+    const language = 'en_US';
+    const prinmaryReleaseDateLte = currentDate.toJSON().slice(0, 10);
+    const url = TMDB.discoverUrl(
+      mediaType,
+      includeAdult,
+      sort_by,
+      language,
+      page,
+      primaryReleaseYear,
+      prinmaryReleaseDateLte,
+    );
+    return getListFromTMDB(url, mediaType);
   } catch (error) {
     console.error(error);
   }

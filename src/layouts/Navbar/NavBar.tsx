@@ -3,6 +3,8 @@ import styles from './navbar.module.scss';
 import { useState } from 'react';
 import { cn } from '~/utils/misc';
 import Link from 'next/link';
+import Lottie from 'lottie-react';
+import likeAnimation from '~/lib/lotties/likeAnimation.json';
 
 const NavBar = () => {
   const [toggle, setToggle] = useState<boolean>(false);
@@ -11,7 +13,7 @@ const NavBar = () => {
   };
   return (
     <>
-      <div className="inline-flex align-middle">
+      <div className="inline-flex items-center align-middle">
         <div className="lg:hidden">
           <button onClick={handleOpen}>
             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="27" viewBox="0 0 24 25" fill="none">
@@ -22,7 +24,10 @@ const NavBar = () => {
             </svg>
           </button>
         </div>
-        <span className="ml-2 text-xl ">Logo</span>
+        <div className="flex items-center">
+          <Lottie animationData={likeAnimation} loop={false} className="-mt-[10px] size-16" />
+          <span className="font-semibold">FILMPUB</span>
+        </div>
       </div>
 
       <div

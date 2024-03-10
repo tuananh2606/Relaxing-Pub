@@ -20,7 +20,7 @@ export type ListPersonType = 'popular' | 'latest';
  */
 
 export interface IMediaList {
-  items?: IMedia[];
+  results?: IMedia[];
   page: number;
   total_pages: number;
   total_results: number;
