@@ -1,5 +1,4 @@
 'use client';
-
 import { FC, useEffect, useState, useTransition } from 'react';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,15 +6,21 @@ import { useForm } from 'react-hook-form';
 import { signIn } from 'next-auth/react';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { useSearchParams } from 'next/navigation';
-import { Card, CardHeader, CardBody, CardFooter, Divider, Image } from '@nextui-org/react';
+import { Card, CardHeader, CardBody, CardFooter, Divider, Button, Input } from '@nextui-org/react';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { loginSchema } from '~/schemas/auth';
 import { FcGoogle } from 'react-icons/fc';
 import { PiEyeSlashFill, PiEyeFill } from 'react-icons/pi';
 import Link from 'next/link';
-import { Button, Input } from '@nextui-org/react';
+import { FormError } from '../elements/Form/FormError';
+import { FormSuccess } from '../elements/Form/FormSuccess';
+import { login } from '~/actions/auth';
+// import { login } from '~/actions/auth';
 
-const LoginForm: FC = () => {
+const LoginForm = () => {
   const [isPending, startTransiton] = useTransition();
+  const [error, setError] = useState<string | undefined>('');
+  const [success, setSuccess] = useState<string | undefined>('');
   const [isVisible, setIsVisible] = useState(false);
   const searchParams = useSearchParams();
   const urlError =
@@ -27,7 +32,7 @@ const LoginForm: FC = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   });
@@ -39,33 +44,27 @@ const LoginForm: FC = () => {
   //   }, [urlError]);
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
+    // setError('');
+    // setSuccess('');
     startTransiton(async () => {
-      //   const res = await login(values, callbackUrl);
-      //   if (res.code !== 200) {
-      //     toast.error(res.message);
-      //   } else {
-      //     toast.success(res.message);
-      //   }
+      const res = await login(values, callbackUrl);
+      if (res?.error) {
+        form.reset();
+        setError(res.error);
+      }
+
+      // if (res?.success) {
+      //   form.reset();
+      //   setSuccess(res.success);
+      // }
+
+      // if (res?.twoFactor) {
+      //   setShowTwoFactor(true);
+      // }
     });
   }
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    reset,
-    formState: { errors, isSubmitting },
-    getValues,
-  } = useForm({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      username: '',
-      password: '',
-    },
-  });
-
-  const onClick = (provider: 'google') => {
+  const onClick = (provider: string) => {
     signIn(provider, {
       callbackUrl: '/',
     });
@@ -90,56 +89,75 @@ const LoginForm: FC = () => {
         </CardHeader>
         <Divider />
         <CardBody>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Input
-              {...register('username', { required: true })}
-              type="text"
-              label="Username"
-              isRequired
-              autoFocus
-              autoComplete="username"
-              classNames={{
-                label: 'text-black/50 dark:text-white/90',
-                input: ['text-black/90 dark:text-white/90'],
-              }}
-            />
-            {errors.username && <p className="text-red-500">{`${errors.username.message}`}</p>}
-            <Input
-              {...register('password')}
-              label="Password"
-              className="mt-2"
-              classNames={{
-                label: 'text-black/50 dark:text-white/90',
-                input: ['text-black/90 dark:text-white/90'],
-              }}
-              autoComplete="current-password"
-              isRequired
-              endContent={
-                <div className="flex h-full items-center justify-center">
-                  <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
-                    {isVisible ? (
-                      <PiEyeSlashFill className="pointer-events-none text-2xl text-default-400" />
-                    ) : (
-                      <PiEyeFill className="pointer-events-none text-2xl text-default-400" />
-                    )}
-                  </button>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field, formState: { errors } }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          isDisabled={isPending}
+                          isRequired
+                          autoFocus
+                          type="email"
+                          autoComplete="email"
+                          label="Email"
+                          errorMessage={errors.email && String(errors.email.message)}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field, formState: { errors } }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          isDisabled={isPending}
+                          isRequired
+                          label="Password"
+                          autoComplete="current-password"
+                          endContent={
+                            <div className="flex h-full items-center justify-center">
+                              <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
+                                {isVisible ? (
+                                  <PiEyeSlashFill className="pointer-events-none text-2xl text-default-400" />
+                                ) : (
+                                  <PiEyeFill className="pointer-events-none text-2xl text-default-400" />
+                                )}
+                              </button>
+                            </div>
+                          }
+                          errorMessage={errors.password && String(errors.password.message)}
+                          type={isVisible ? 'text' : 'password'}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormError message={error || urlError} />
+                <FormSuccess message={success} />
+                <div className="mt-2 w-full">
+                  <Button className="w-full bg-orange-500" type="submit" variant="shadow">
+                    Đăng nhập
+                  </Button>
                 </div>
-              }
-              type={isVisible ? 'text' : 'password'}
-            />
-            {errors.password && <p className="text-red-500">{`${errors.password.message}`}</p>}
-            <div className="mt-2 w-full">
-              <Button disabled={isSubmitting} className="bg-orange-500 w-full" type="submit" variant="shadow">
-                Đăng nhập
-              </Button>
-            </div>
-          </form>
-          <span className="text-indigo-500 mt-2 text-center text-xs">
-            Chưa có tài khoản?
-            <Link href="/register" className="ml-1 hover:underline">
-              Đăng ký
-            </Link>
-          </span>
+              </div>
+            </form>
+            <span className="text-indigo-500 mt-2 text-center text-xs">
+              Chưa có tài khoản?
+              <Link href="/auth/register" className="ml-1 hover:underline">
+                Đăng ký
+              </Link>
+            </span>
+          </Form>
         </CardBody>
       </Card>
     </section>
