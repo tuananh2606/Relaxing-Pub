@@ -44,8 +44,8 @@ const LoginForm = () => {
   //   }, [urlError]);
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
-    // setError('');
-    // setSuccess('');
+    setError('');
+    setSuccess('');
     startTransiton(async () => {
       const res = await login(values, callbackUrl);
       if (res?.error) {
