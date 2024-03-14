@@ -3,7 +3,6 @@ import './globals.css';
 import { SessionProvider, ProviderNextUi, ProviderTopLoader } from '~/components/providers';
 import { Metadata, Viewport } from 'next';
 import { PWALifeCycle } from '~/components/pwa/PWALifecycle';
-import { url } from 'inspector';
 
 const inter = Inter({ subsets: ['latin', 'vietnamese'] });
 
@@ -59,8 +58,8 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} dark`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className}`}>
         <PWALifeCycle />
         <ProviderNextUi>
           <ProviderTopLoader>

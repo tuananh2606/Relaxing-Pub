@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { cn } from '~/utils/misc';
+import { cn } from '~/lib/utils';
 
 interface IOverview {
   overview: string | null | undefined;

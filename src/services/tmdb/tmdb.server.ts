@@ -1,7 +1,7 @@
 import { META, MOVIES, PROVIDERS_LIST } from '@consumet/extensions';
 
 import type { IMedia } from '~/types/media';
-import { fetcher } from '~/utils/fetcher';
+import { fetcher } from '~/lib/utils';
 
 import type {
   ICredit,

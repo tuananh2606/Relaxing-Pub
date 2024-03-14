@@ -1,16 +1,33 @@
 'use client';
-import styles from './navbar.module.scss';
 import { useState } from 'react';
-import { cn } from '~/utils/misc';
-import Link from 'next/link';
 import Lottie from 'lottie-react';
+import Link from 'next/link';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from '@nextui-org/react';
+
+import { logout } from '~/components/Auth';
+import { cn } from '~/lib/utils';
+import styles from './navbar.module.scss';
 import likeAnimation from '~/lib/lotties/likeAnimation.json';
+import { useSession } from 'next-auth/react';
 
 const NavBar = () => {
   const [toggle, setToggle] = useState<boolean>(false);
+  const session = useSession();
+
   const handleOpen = () => {
     setToggle((p) => !p);
   };
+
+  const signOut = () => {
+    logout();
+  };
+
+  const items = [
+    {
+      key: 'signOut',
+      label: 'Sign out',
+    },
+  ];
   return (
     <>
       <div className="inline-flex items-center align-middle">
@@ -79,7 +96,25 @@ const NavBar = () => {
               />
             </svg>
           </div>
-          <div className={styles.navElement}>Người dùng</div>
+          <div className={styles.navElement}>
+            {session.data ? (
+              <Dropdown>
+                <DropdownTrigger>
+                  <h1>TEst</h1>
+                </DropdownTrigger>
+                <DropdownMenu aria-label="Dynamic Actions" items={items}>
+                  <DropdownItem>
+                    <Button onClick={signOut}>Sign out</Button>
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            ) : (
+              <Link href="/auth/login">
+                <Button>Login</Button>
+              </Link>
+            )}
+            {/* <SignOut /> */}
+          </div>
         </div>
       </div>
     </>

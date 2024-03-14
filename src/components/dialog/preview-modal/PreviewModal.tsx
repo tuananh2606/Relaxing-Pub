@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ConvertToHourAndMinutes } from '~/utils';
+import { ConvertToHourAndMinutes } from '~/lib/utils';
 import styles from './preview-modal.module.scss';
 import { ICredit, IMovieDetail, ITvShowDetail } from '~/services/tmdb/tmdb.types';
 import Image from 'next/image';

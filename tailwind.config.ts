@@ -1,10 +1,10 @@
-// prettier-ignore
 import type { Config } from 'tailwindcss';
 const colors = require('tailwindcss/colors');
 const { withTV } = require('tailwind-variants/transformer');
 const { nextui } = require('@nextui-org/react');
 
-const config: Config = {
+const config = {
+  darkMode: ['class'],
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -12,6 +12,7 @@ const config: Config = {
     './src/layouts/**/*.{js,ts,jsx,tsx,mdx}',
     './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
+  prefix: '',
   theme: {
     colors: {
       transparent: 'transparent',
@@ -23,36 +24,64 @@ const config: Config = {
       amber: colors.amber,
       'header-bg': '#000000',
     },
+    container: {
+      center: true,
+      padding: '2rem',
+      screens: {
+        '2xl': '1400px',
+      },
+    },
     extend: {
       colors: {
         'movie-brand-color': 'var(--theme-movie-brand)',
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
       },
-      // prettier-ignore
-      gridTemplateAreas: {
-        'details-mobile': [
-          "poster title",
-          "poster title",
-          "info info",
-          "buttons buttons",
-        ],
-        'details': [
-          "poster title",
-          "poster info",
-          "poster buttons",
-        ],
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-      },
-      animation: {
-        'fade-bottom': 'fade-bottom 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) 5000ms both',
-        'slide-bottom': 'slide-bottom 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) 5000ms both',
-        'scale-in-center': 'scale-in-center 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940)   both',
-        'scale-up-center': 'scale-up-center 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000)   both',
-        'scale-out-center': 'scale-out-center 0.5s cubic-bezier(0.550, 0.085, 0.680, 0.530)   both',
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
       keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
         'fade-bottom': {
           '0%': {
             display: 'grid',
@@ -97,9 +126,35 @@ const config: Config = {
           },
         },
       },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        'fade-bottom': 'fade-bottom 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) 5000ms both',
+        'slide-bottom': 'slide-bottom 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) 5000ms both',
+        'scale-in-center': 'scale-in-center 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940)   both',
+        'scale-up-center': 'scale-up-center 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000)   both',
+        'scale-out-center': 'scale-out-center 0.5s cubic-bezier(0.550, 0.085, 0.680, 0.530)   both',
+      },
+      // prettier-ignore
+      gridTemplateAreas: {
+        'details-mobile': [
+          "poster title",
+          "poster title",
+          "info info",
+          "buttons buttons",
+        ],
+        'details': [
+          "poster title",
+          "poster info",
+          "poster buttons",
+        ],
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      },
     },
   },
-  darkMode: 'class',
   plugins: [
     nextui({
       themes: {
@@ -152,5 +207,6 @@ const config: Config = {
     require('tailwindcss-animate'),
     require('@savvywombat/tailwindcss-grid-areas'),
   ],
-};
+} satisfies Config;
+
 export default withTV(config);

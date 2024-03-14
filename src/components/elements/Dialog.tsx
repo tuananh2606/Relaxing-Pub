@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { cn } from '~/utils/misc';
+import { cn } from '~/lib/utils';
 
 const Dialog = DialogPrimitive.Root;
 const DialogTrigger = DialogPrimitive.Trigger;
@@ -40,7 +40,7 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          'rounded-xl border border-default-100 bg-[#181818] !p-6 shadow-medium will-change-transform focus:outline-none',
+          'border-default-100 shadow-medium rounded-xl border bg-[#181818] !p-6 will-change-transform focus:outline-none',
           className ? className : classNames?.content,
         )}
         {...props}
@@ -50,7 +50,7 @@ const DialogContent = React.forwardRef<
           <DialogPrimitive.Close
             asChild
             className={cn(
-              'absolute right-4 top-4 z-20 flex h-5 w-5 items-center justify-center rounded-md opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:ring-offset-2 disabled:pointer-events-none',
+              'focus:ring-primary-200 absolute right-4 top-4 z-20 flex h-5 w-5 items-center justify-center rounded-md opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none',
               classNames?.closeButton,
             )}
           >
