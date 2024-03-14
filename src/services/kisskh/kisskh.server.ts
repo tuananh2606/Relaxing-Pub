@@ -1,4 +1,4 @@
-import { fetcher } from '~/utils/fetcher';
+import { fetcher } from '~/lib/utils';
 
 import type { IEpisodeVideo, IItemInfo, ISearchItem, IVideoSubtitle } from './kisskh.types';
 import KissKh from './utils.server';

@@ -1,4 +1,4 @@
-import { fetcher } from '~/utils/fetcher';
+import { fetcher } from '~/lib/utils';
 
 import type { IBilibiliEpisode, IBilibiliInfo, IBilibiliSearch } from './bilibili.types';
 import Bilibili from './utils.server';

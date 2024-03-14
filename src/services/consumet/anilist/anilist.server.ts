@@ -1,7 +1,5 @@
 import { META, PROVIDERS_LIST } from '@consumet/extensions';
 
-import { fetcher } from '~/utils/fetcher';
-
 import type { IAnimeInfo, IAnimeList, IAnimeResult, IEpisodeInfo } from './anilist.types';
 import { fetchAnimeEpisodeHandler, fetchAnimeResultsHandler } from './utils.server';
 

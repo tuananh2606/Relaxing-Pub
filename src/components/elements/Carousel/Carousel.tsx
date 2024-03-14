@@ -5,7 +5,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { EmblaOptionsType, EmblaPluginType, EmblaCarouselType, EmblaEventType } from 'embla-carousel';
 import { SlotsToClasses } from '@nextui-org/react';
 import styles from './carousel.module.scss';
-import { cn } from '~/utils/misc';
+import { cn } from '~/lib/utils';
 
 // type CarouselProps = {
 //   options?: EmblaOptionsType;

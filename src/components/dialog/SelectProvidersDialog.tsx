@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next-nprogress-bar';
-import { fetcher } from '~/utils/fetcher';
+import { fetcher } from '~/lib/utils';
 import type { Provider } from '~/services/providers.server';
 import { DialogHeader, DialogTitle } from '../elements/Dialog';
 

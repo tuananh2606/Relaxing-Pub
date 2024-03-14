@@ -5,14 +5,13 @@ import { useMeasure, useMediaQuery } from '@react-hookz/web';
 import { Image as NextUIImage } from '@nextui-org/image';
 import { Button, Chip, Tabs, Tab, Card, CardBody } from '@nextui-org/react';
 
-import { fetcher } from '~/utils/fetcher';
+import { fetcher, ConvertToHourAndMinutes } from '~/lib/utils';
 import { ColorPalette } from '~/app/api/colors-palette/route';
 import { ICredit, IMediaList, IMovieDetail, ITvShowDetail } from '~/services/tmdb/tmdb.types';
 import { TMDB } from '~/services/tmdb/utils.server';
 import tinycolor from 'tinycolor2';
 import Overview from '../item/Overview';
 import MediaCarousel from './MediaCarousel';
-import { ConvertToHourAndMinutes } from '~/utils';
 
 interface IMediaDetails {
   data: {
@@ -85,9 +84,9 @@ export const MediaDetails = (props: IMediaDetails) => {
           } as CSSProperties
         }
       >
-        <div className="relative left-0 top-0 flex h-full w-full flex-col bg-gradient-to-b !from-transparent from-[50px] !to-movie-brand-color to-[50px] sm:from-[170px] sm:to-[170px]">
-          <div className="relative z-10 grid w-full grid-cols-[1fr_2fr] grid-rows-[1fr_auto_auto] gap-4 px-3 pb-16 pt-5 grid-areas-details-mobile md:grid-areas-details lg:grid-rows-[auto_1fr_auto]">
-            <div className="z-10 flex items-center justify-center grid-in-poster">
+        <div className="!to-movie-brand-color relative left-0 top-0 flex h-full w-full flex-col bg-gradient-to-b !from-transparent from-[50px] to-[50px] sm:from-[170px] sm:to-[170px]">
+          <div className="grid-areas-details-mobile md:grid-areas-details relative z-10 grid w-full grid-cols-[1fr_2fr] grid-rows-[1fr_auto_auto] gap-4 px-3 pb-16 pt-5 lg:grid-rows-[auto_1fr_auto]">
+            <div className="grid-in-poster z-10 flex items-center justify-center">
               <NextUIImage
                 src={posterPath}
                 alt={`${titleEng} Poster`}
@@ -97,12 +96,12 @@ export const MediaDetails = (props: IMediaDetails) => {
                 }}
               />
             </div>
-            <div className="z-10 flex flex-col grid-in-title">
+            <div className="grid-in-title z-10 flex flex-col">
               <span className="text-3xl font-bold md:text-4xl">{titleEng}</span>
               <span className="italic">{mediaDetails?.tagline}</span>
             </div>
             <div className="grid-in-info">
-              <div className="item z-10 flex flex-col grid-in-info">
+              <div className="item grid-in-info z-10 flex flex-col">
                 <div className="flex flex-col gap-2 md:flex-row">
                   <div
                     className="w-fit rounded-2xl px-4 py-2"
@@ -156,7 +155,7 @@ export const MediaDetails = (props: IMediaDetails) => {
                 </div>
               </div>
             </div>
-            <div className="z-10 grid-in-buttons">
+            <div className="grid-in-buttons z-10">
               <Button size="lg" className="w-full bg-[#ED213A] bg-gradient-to-r from-[#ED213A] to-[#93291E] md:w-auto">
                 Watch Now
               </Button>
