@@ -40,15 +40,22 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  username      String?
+  username      String?   @unique
+  role          UserRole  @default(USER)
   accounts      Account[]
   sessions      Session[]
 }
 
 model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+  token   String   @unique
+  expires DateTime
+  email   String
+  id      String   @id @default(cuid())
 
-  @@unique([identifier, token])
+  @@unique([email, token])
+}
+
+enum UserRole {
+  ADMIN
+  USER
 }

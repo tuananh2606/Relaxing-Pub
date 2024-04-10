@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import LoginForm from '~/components/Auth/LoginForm';
+import LoginForm from '~/components/pages/Auth/LoginForm';
 
 export const metadata: Metadata = {
   title: 'Login - FilmPub',
@@ -7,10 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-  return (
-    <>
-      <div className="fixed inset-0 z-0 h-full w-full bg-cover" style={{ backgroundImage: `url(/bg-login.jpg)` }}></div>
-      <LoginForm />
-    </>
-  );
+  return <LoginForm />;
 }

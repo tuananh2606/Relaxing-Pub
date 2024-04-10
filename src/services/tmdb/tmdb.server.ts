@@ -1,4 +1,4 @@
-import { META, MOVIES, PROVIDERS_LIST } from '@consumet/extensions';
+import { ISearch, META, MOVIES, PROVIDERS_LIST } from '@consumet/extensions';
 
 import type { IMedia } from '~/types/media';
 import { fetcher } from '~/lib/utils';
@@ -6,6 +6,7 @@ import { fetcher } from '~/lib/utils';
 import type {
   ICredit,
   IDetailImages,
+  IKeyWord,
   ILanguage,
   IList,
   IListGenre,
@@ -16,6 +17,7 @@ import type {
   IPeopleDetail,
   IPeopleExternalIds,
   IPeopleImages,
+  ISearchKeyWord,
   ISeasonDetail,
   ITvShowDetail,
   IVideos,
@@ -210,17 +212,44 @@ export const getPeopleDetail = async (person_id: number, language?: string): Pro
 
 /* ==========================================Search Field============================================= */
 
-// export const getSearchMovies = async (
-//   keyword: string,
-//   page?: number,
-//   language?: string,
-//   include_adult?: boolean,
-//   region?: string,
-//   year?: number,
-// ): Promise<IMediaList> => {
-//   const url = TMDB.searchMovies(keyword, language, page, include_adult, region, year, undefined);
-//   return getListFromTMDB(url, 'movie');
-// };
+export const getSearchAll = async (
+  keyword: string,
+  page?: number,
+  include_adult?: boolean,
+  language?: string,
+): Promise<IMediaList> => {
+  const url = TMDB.searchAll(keyword, include_adult, language, page);
+  return getListFromTMDB(url);
+};
+
+export const getSearchTitles = async (keyword: string, page?: number): Promise<IMediaList> => {
+  const url = TMDB.searchKeyword(keyword, page);
+  return getListFromTMDB(url);
+};
+
+export const getSearchMovies = async (
+  keyword: string,
+  page?: number,
+  language?: string,
+  include_adult?: boolean,
+  region?: string,
+  year?: number,
+): Promise<IMediaList> => {
+  const url = TMDB.searchMovies(keyword, language, page, include_adult, region, year, undefined);
+  return getListFromTMDB(url, 'movie');
+};
+
+export const getSearchTv = async (
+  keyword: string,
+  page?: number,
+  language?: string,
+  include_adult?: boolean,
+  year?: number,
+  first_air_date_year?: number,
+): Promise<IMediaList> => {
+  const url = TMDB.searchTv(keyword, language, page, include_adult, year, first_air_date_year);
+  return getListFromTMDB(url, 'tv');
+};
 
 /* =======================================End of Search Field========================================= */
 
@@ -239,6 +268,51 @@ export const getVideos = async (type: 'movie' | 'tv', id: number): Promise<IVide
       url,
     });
     return res;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getPopular = async (type: 'movie' | 'tv', page?: number): Promise<IMediaList | undefined> => {
+  try {
+    const url = TMDB.popularUrl(type, page);
+    return getListFromTMDB(url, type);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getTopRated = async (type: 'movie' | 'tv', page?: number): Promise<IMediaList | undefined> => {
+  try {
+    const url = TMDB.topRatedUrl(type, page);
+    return getListFromTMDB(url, type);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getUpcoming = async (type: 'movie' | 'tv', page?: number): Promise<IMediaList | undefined> => {
+  try {
+    const url = TMDB.upcomingUrl(type, page);
+    return getListFromTMDB(url, type);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getAiringToday = async (page?: number): Promise<IMediaList | undefined> => {
+  try {
+    const url = TMDB.airingTodayUrl(page);
+    return getListFromTMDB(url, 'tv');
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getOnTheAir = async (page?: number): Promise<IMediaList | undefined> => {
+  try {
+    const url = TMDB.onTheAirUrl(page);
+    return getListFromTMDB(url, 'tv');
   } catch (error) {
     console.error(error);
   }

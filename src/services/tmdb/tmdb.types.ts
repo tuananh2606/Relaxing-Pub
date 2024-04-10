@@ -343,3 +343,14 @@ export interface IMovieSubtitle {
   lang: string;
   url: string;
 }
+
+export interface IKeyWord {
+  id: number;
+  name: string;
+}
+export interface ISearchKeyWord {
+  results?: IKeyWord[];
+  page: number;
+  total_pages: number;
+  total_results: number;
+}

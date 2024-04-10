@@ -27,6 +27,53 @@ export class TMDB {
     return url;
   };
 
+  static popularUrl = (mediaType: MediaType, page?: number, language?: string): string => {
+    let url = `${this.API_BASE_URL}/${mediaType}/popular?api_key=${this.key}`;
+
+    if (language) url += `&language=${language}`;
+    if (page) url += `&page=${page}`;
+
+    return url;
+  };
+
+  static upcomingUrl = (mediaType: MediaType, page?: number, language?: string): string => {
+    let url = `${this.API_BASE_URL}/${mediaType}/upcoming?api_key=${this.key}`;
+
+    if (language) url += `&language=${language}`;
+    if (page) url += `&page=${page}`;
+
+    return url;
+  };
+
+  static topRatedUrl = (mediaType: MediaType, page?: number, language?: string): string => {
+    let url = `${this.API_BASE_URL}/${mediaType}/top_rated?api_key=${this.key}`;
+
+    if (language) url += `&language=${language}`;
+    if (page) url += `&page=${page}`;
+
+    return url;
+  };
+
+  static airingTodayUrl = (page?: number, language?: string, timezone?: string): string => {
+    let url = `${this.API_BASE_URL}/tv/airing_today?api_key=${this.key}`;
+
+    if (language) url += `&language=${language}`;
+    if (page) url += `&page=${page}`;
+    if (timezone) url += `&timezone=${timezone}`;
+
+    return url;
+  };
+
+  static onTheAirUrl = (page?: number, language?: string, timezone?: string): string => {
+    let url = `${this.API_BASE_URL}/tv/on_the_air?api_key=${this.key}`;
+
+    if (language) url += `&language=${language}`;
+    if (page) url += `&page=${page}`;
+    if (timezone) url += `&timezone=${timezone}`;
+
+    return url;
+  };
+
   static posterUrl = (path: string, width?: PosterSize): string => {
     if (width) {
       return `${this.MEDIA_BASE_URL}/${width}${path}`;
@@ -146,8 +193,18 @@ export class TMDB {
     return url;
   };
 
+  static searchAll = (keyword: string, include_adult?: boolean, language?: string, page?: number): string => {
+    let url = `${this.API_BASE_URL}/search/multi?api_key=${this.key}&query=${keyword}`;
+
+    if (include_adult) url += `&include_adult=true`;
+    if (language) url += `&language=${language}`;
+    if (page) url += `&page=${page}`;
+
+    return url;
+  };
+
   static searchKeyword = (keyword: string, page?: number): string => {
-    let url = `${this.API_BASE_URL}/search/${keyword}?api_key=${this.key}`;
+    let url = `${this.API_BASE_URL}/search/keyword?api_key=${this.key}&query=${keyword}`;
     if (page) {
       url += `&page=${page}`;
     }
@@ -190,6 +247,7 @@ export class TMDB {
     language?: string,
     page?: number,
     include_adult?: boolean,
+    year?: number,
     first_air_date_year?: number,
   ): string => {
     let url = `${this.API_BASE_URL}/search/tv?api_key=${this.key}&query=${keyword}`;
@@ -201,6 +259,9 @@ export class TMDB {
     }
     if (include_adult) {
       url += `&include_adult=${include_adult}`;
+    }
+    if (year) {
+      url += `&year=${include_adult}`;
     }
     if (first_air_date_year) {
       url += `&first_air_date_year=${first_air_date_year}`;
