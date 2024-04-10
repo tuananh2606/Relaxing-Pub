@@ -9,6 +9,7 @@ const config = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/auth/**/*.{js,ts,jsx,tsx,mdx}',
     './src/layouts/**/*.{js,ts,jsx,tsx,mdx}',
     './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
@@ -22,6 +23,10 @@ const config = {
       gray: colors.gray,
       orange: colors.orange,
       amber: colors.amber,
+      red: colors.red,
+      blue: colors.blue,
+      green: colors.green,
+      emerald: colors.emerald,
       'header-bg': '#000000',
     },
     container: {
@@ -32,6 +37,9 @@ const config = {
       },
     },
     extend: {
+      screens: {
+        '3xl': '1600px',
+      },
       colors: {
         'movie-brand-color': 'var(--theme-movie-brand)',
         border: 'hsl(var(--border))',
@@ -148,6 +156,9 @@ const config = {
           "poster info",
           "poster buttons",
         ],
+        'search': [
+          "sidebar results",
+        ],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -158,28 +169,6 @@ const config = {
   plugins: [
     nextui({
       themes: {
-        light: {
-          colors: {
-            background: '#FAF3E1',
-            foreground: '#F5E7C6',
-            secondary: '#FF6D1F',
-            primary: {
-              50: '#3B096C',
-              100: '#1D2125',
-              200: '#22272B',
-              300: '#2C333A',
-              400: '#454F59',
-              500: '#596773',
-              600: '#738496',
-              700: '#8C9BAB',
-              800: '#9FADBC',
-              900: '#B6C2CF',
-              DEFAULT: '#222222',
-              foreground: '#ffffff',
-            },
-            focus: '#222222',
-          },
-        },
         dark: {
           colors: {
             background: '#221F1F',
