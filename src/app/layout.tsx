@@ -1,8 +1,9 @@
-import { Inter } from 'next/font/google';
 import './globals.css';
+import { Inter } from 'next/font/google';
 import { SessionProvider, ProviderNextUi, ProviderTopLoader } from '~/components/providers';
 import { Metadata, Viewport } from 'next';
 import { PWALifeCycle } from '~/components/pwa/PWALifecycle';
+import { auth } from '~/auth';
 
 const inter = Inter({ subsets: ['latin', 'vietnamese'] });
 
@@ -57,13 +58,14 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className}`}>
         <PWALifeCycle />
         <ProviderNextUi>
           <ProviderTopLoader>
-            <SessionProvider>{children} </SessionProvider>
+            <SessionProvider session={session}>{children} </SessionProvider>
           </ProviderTopLoader>
         </ProviderNextUi>
       </body>

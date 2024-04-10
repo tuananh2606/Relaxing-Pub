@@ -5,15 +5,13 @@ import AuthError from 'next-auth';
 import prisma from '~/lib/db';
 import Haikunator from 'haikunator';
 
-import { signOut } from '~/auth';
+import { signIn } from 'next-auth/react';
+// import { signOut } from '~/auth';
 import { loginSchema, registerSchema } from '~/schemas/auth';
-import { getUserByEmail } from '~/prisma/queries/user';
-import { signIn } from '~/auth';
+import { getUserByEmail, getUserByUsername } from '~/actions/user';
+// import { signIn } from '~/auth';
 import { DEFAULT_LOGIN_REDIRECT } from '~/routes';
-// import { getTwoFactorTokenByEmail } from '~/data/two-factor-token';
-// import { sendVerificationEmail, sendTwoFactorTokenEmail } from '~/lib/mail';
-// import { generateVerificationToken, generateTwoFactorToken } from '~/lib/tokens';
-// import { getTwoFactorConfirmationByUserId } from '~/data/two-factor-confirmation';
+import { deleteVerificationTokenById, getVerificationTokenByEmail } from './token';
 
 export const login = async (values: z.infer<typeof loginSchema>, callbackUrl?: string | null) => {
   const validatedFields = loginSchema.safeParse(values);
@@ -29,13 +27,6 @@ export const login = async (values: z.infer<typeof loginSchema>, callbackUrl?: s
   if (!existingUser || !existingUser.email || !existingUser.password) {
     return { error: 'Email does not exist!' };
   }
-  // if (!existingUser.emailVerified) {
-  //   const verificationToken = await generateVerificationToken(existingUser.email);
-
-  //   await sendVerificationEmail(verificationToken.email, verificationToken.token);
-
-  //   return { success: 'Confirmation email sent!' };
-  // }
 
   // if (existingUser.isTwoFactorEnabled && existingUser.email) {
   //   if (code) {
@@ -87,61 +78,94 @@ export const login = async (values: z.infer<typeof loginSchema>, callbackUrl?: s
       redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
     });
   } catch (error) {
+    console.log(error);
+
     // if (error instanceof AuthError) {
-    //   switch (error) {
+    //   switch (error.type) {
     //     case 'CredentialsSignin':
     //       return { error: 'Invalid credentials!' };
     //     default:
     //       return { error: 'Something went wrong!' };
     //   }
     // }
-
     throw error;
   }
 };
 
 export const register = async (values: z.infer<typeof registerSchema>) => {
-  const validatedFields = registerSchema.safeParse(values);
+  try {
+    const validatedFields = registerSchema.safeParse(values);
 
-  const haikunator = new Haikunator({
-    adjectives: ['custom', 'adjectives'],
-    nouns: ['custom', 'nouns'],
-    seed: 'custom-seed',
-    defaults: {
-      // class defaults
-      tokenLength: 6,
-    },
-  });
+    const haikunator = new Haikunator({
+      defaults: {
+        tokenLength: 6,
+      },
+    });
 
-  if (!validatedFields.success) {
-    return { error: 'Invalid fields!' };
+    if (!validatedFields.success) {
+      return { error: 'Các trường không hợp lệ!' };
+    }
+
+    const { email, password, username, code } = validatedFields.data;
+
+    const getEmail = getUserByEmail(email);
+    const getUserName = getUserByUsername(username);
+
+    const [existingEmail, existingUsername] = await Promise.all([getEmail, getUserName]).then();
+
+    if (existingEmail) {
+      return { error: 'Email đã được sử dụng!' };
+    }
+
+    if (existingUsername) {
+      return { error: 'Username đã được sử dụng!' };
+    }
+    const verficationToken = await getVerificationTokenByEmail(email);
+
+    if (verficationToken?.token === code) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await prisma.user.create({
+        data: {
+          username,
+          name: haikunator.haikunate({ tokenHex: true }),
+          email,
+          password: hashedPassword,
+          emailVerified: new Date(),
+        },
+      });
+      await deleteVerificationTokenById(verficationToken.id);
+      return { success: 'Đăng ký thành công!' };
+    } else {
+      return { error: 'Mã xác nhận không chính xác' };
+    }
+  } catch (err) {
+    return { error: 'Something went wrong!' };
   }
-
-  const { email, password, username } = validatedFields.data;
-
-  const existingUser = await getUserByEmail(email);
-
-  if (existingUser) {
-    return { error: 'Email already in use!' };
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  await prisma.user.create({
-    data: {
-      username,
-      name: haikunator.haikunate({ tokenHex: true }),
-      email,
-      password: hashedPassword,
-    },
-  });
-
-  //   const verificationToken = await generateVerificationToken(email);
-  //   await sendVerificationEmail(verificationToken.email, verificationToken.token);
-
-  return { success: 'Confirmation email sent!' };
 };
 
-export const logout = async () => {
-  await signOut();
+// export const logout = async () => {
+//   await signOut();
+// };
+
+export const verifyTokenByEmail = async (email: string, code: string) => {
+  try {
+    const existingToken = await prisma.verificationToken.findFirst({
+      where: { email },
+    });
+
+    if (!existingToken) {
+      return { error: 'Invalid Code!' };
+    }
+
+    if (existingToken?.token !== code) {
+      return { error: 'Wrong code!' };
+    } else {
+      const hasExpired = new Date(existingToken.expires) < new Date();
+      if (hasExpired) {
+        return { error: 'Code has expired!' };
+      }
+    }
+  } catch (err) {
+    throw err;
+  }
 };

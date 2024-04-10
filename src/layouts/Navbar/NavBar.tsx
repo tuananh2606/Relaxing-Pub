@@ -1,123 +1,234 @@
 'use client';
 import { useState } from 'react';
-import Lottie from 'lottie-react';
 import Link from 'next/link';
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from '@nextui-org/react';
+import { useTheme } from 'next-themes';
+import {
+  Button,
+  Avatar,
+  Navbar,
+  NavbarContent,
+  NavbarBrand,
+  NavbarItem,
+  NavbarMenuToggle,
+  NavbarMenu,
+  NavbarMenuItem,
+  Switch,
+  User,
+} from '@nextui-org/react';
+import { SunIcon, MoonIcon } from '@radix-ui/react-icons';
+import { signOut } from 'next-auth/react';
 
-import { logout } from '~/components/Auth';
-import { cn } from '~/lib/utils';
-import styles from './navbar.module.scss';
-import likeAnimation from '~/lib/lotties/likeAnimation.json';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from '~/components/ui/dropdown';
 import { useSession } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
+import Logo from '~/components/ui/logo';
+import Search from '~/components/elements/Search';
 
 const NavBar = () => {
+  const { theme, setTheme } = useTheme();
   const [toggle, setToggle] = useState<boolean>(false);
-  const session = useSession();
+  const [open, setOpen] = useState(false);
+  const [isSelected, setIsSelected] = useState<boolean>(theme === 'light' ? false : true);
+  const { data } = useSession();
+  const pathName = usePathname();
+  const menuItems = [
+    {
+      title: 'Trang chủ',
+      href: '/',
+    },
+    {
+      title: 'Phim',
+      href: '/movie/popular',
+    },
+    {
+      title: 'Phim T.Hình',
+      href: '/tv/popular',
+    },
+    {
+      title: 'Danh sách của tôi',
+      href: '/wishlist',
+    },
+    {
+      title: 'My Settings',
+      href: '/',
+    },
+    {
+      title: 'Log Out',
+      href: '',
+    },
+  ];
 
   const handleOpen = () => {
     setToggle((p) => !p);
   };
 
-  const signOut = () => {
-    logout();
-  };
+  // const signOut = () => {
+  //   logout();
+  // };
 
-  const items = [
-    {
-      key: 'signOut',
-      label: 'Sign out',
-    },
-  ];
   return (
-    <>
-      <div className="inline-flex items-center align-middle">
-        <div className="lg:hidden">
-          <button onClick={handleOpen}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="27" viewBox="0 0 24 25" fill="none">
-              <path
-                d="M16 18.3137V20.3137H5V18.3137H16ZM21 11.3137V13.3137H3V11.3137H21ZM19 4.31372V6.31372H8V4.31372H19Z"
-                fill="white"
-              />
-            </svg>
-          </button>
-        </div>
-        <div className="flex items-center">
-          <Lottie animationData={likeAnimation} loop={false} className="-mt-[10px] size-16" />
-          <span className="font-semibold">FILMPUB</span>
-        </div>
-      </div>
-
-      <div
-        className={cn(
-          'fixed inset-0 mt-14 h-full bg-black md:inset-[0_70%_0_0] lg:relative lg:left-0 lg:mt-0 lg:flex lg:w-full lg:translate-x-0 lg:items-center lg:bg-transparent',
-
-          toggle ? 'animate-in slide-in-from-left' : '-translate-x-full',
-        )}
-      >
-        <div className="primary-navigation mt-4 flex items-center lg:mt-0">
-          <ul className="w-full px-4 lg:flex">
-            <li className={styles.navTab}>
-              <Link className="inline-flex align-middle" href="/">
-                <svg
-                  className="block lg:hidden"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  height="24"
-                  fill="currentColor"
-                >
-                  <path d="M19 21H5C4.44772 21 4 20.5523 4 20V11L1 11L11.3273 1.6115C11.7087 1.26475 12.2913 1.26475 12.6727 1.6115L23 11L20 11V20C20 20.5523 19.5523 21 19 21ZM6 19H18V9.15745L12 3.7029L6 9.15745V19Z"></path>
-                </svg>
-                <span className="ml-3">Trang chủ</span>
+    <Navbar
+      isBlurred
+      onMenuOpenChange={handleOpen}
+      isMenuOpen={toggle}
+      classNames={{
+        wrapper: 'w-full z-50 max-w-none',
+        brand: 'grow-0',
+        item: [
+          'flex',
+          'relative',
+          'h-full',
+          'items-center',
+          "data-[active=true]:after:content-['']",
+          'data-[active=true]:after:absolute',
+          'data-[active=true]:after:bottom-0',
+          'data-[active=true]:after:left-0',
+          'data-[active=true]:after:right-0',
+          'data-[active=true]:after:h-[2px]',
+          'data-[active=true]:after:rounded-[2px]',
+          'data-[active=true]:after:bg-primary',
+        ],
+      }}
+    >
+      <NavbarContent className=" lg:!grow" justify="start">
+        <NavbarContent className="!grow-0 lg:hidden" justify="start">
+          <NavbarMenuToggle aria-label={toggle ? 'Close menu' : 'Open menu'} />
+        </NavbarContent>
+        <NavbarBrand className="mr-4">
+          <Link className="flex items-center" href="/">
+            <Logo />
+          </Link>
+        </NavbarBrand>
+        <NavbarContent className="z-50 hidden gap-3 lg:flex">
+          {menuItems.slice(0, -2).map((item, idx) => (
+            <NavbarItem key={idx} isActive={pathName === item.href}>
+              <Link className="transition-all hover:opacity-80" href={item.href}>
+                {item.title}
               </Link>
-            </li>
-            <Link className="inline-flex align-middle" href="/movies">
-              <li className={styles.navTab}>Phim</li>
+            </NavbarItem>
+          ))}
+        </NavbarContent>
+
+        <NavbarContent as="div" className="flex items-center" justify="end">
+          <Search />
+          {data ? (
+            <DropdownMenu open={open} onOpenChange={setOpen}>
+              <DropdownMenuTrigger asChild>
+                <Avatar radius="sm" showFallback name={data.user.name as string} src={data.user.image as string} />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>
+                  <User
+                    name={data.user.name as string}
+                    avatarProps={{
+                      src: data.user.image as string,
+                    }}
+                  />
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    Billing
+                    <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    Settings
+                    <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    Keyboard shortcuts
+                    <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>Team</DropdownMenuItem>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem>Email</DropdownMenuItem>
+                        <DropdownMenuItem>Message</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>More...</DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                  <DropdownMenuItem>
+                    New Team
+                    <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Language</DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem>English</DropdownMenuItem>
+                        <DropdownMenuItem>Vietnamese</DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                </DropdownMenuGroup>
+
+                <DropdownMenuItem className="flex items-center justify-between" onSelect={(e) => e.preventDefault()}>
+                  <span>Dark mode</span>
+                  <Switch
+                    size="md"
+                    color="success"
+                    startContent={<MoonIcon className="mr-2" />}
+                    endContent={<SunIcon />}
+                    isSelected={isSelected}
+                    onValueChange={() => {
+                      if (theme === 'dark') {
+                        setIsSelected(false);
+                        setTheme('light');
+                      } else {
+                        setIsSelected(true);
+                        setTheme('dark');
+                      }
+                    }}
+                  />
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/' })}>Log out</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link href="/auth/login">
+              <Button className="bg-[#ED213A] bg-gradient-to-r from-[#ED213A] to-[#93291E]">Login</Button>
             </Link>
+          )}
+        </NavbarContent>
 
-            <li className={styles.navTab}>Mới & Phổ biến</li>
-            <li className={styles.navTab}>Danh sách của tôi</li>
-          </ul>
-        </div>
-        <div className="secondary-navigation flex flex-grow flex-col justify-end px-4 lg:flex-row lg:items-center">
-          <div className={`${styles.navElement} hidden lg:block`}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" fill="none">
-              <path
-                d="M16.031 14.6168L20.3137 18.8995L18.8995 20.3137L14.6168 16.031C13.0769 17.263 11.124 18 9 18C4.032 18 0 13.968 0 9C0 4.032 4.032 0 9 0C13.968 0 18 4.032 18 9C18 11.124 17.263 13.0769 16.031 14.6168ZM14.0247 13.8748C15.2475 12.6146 16 10.8956 16 9C16 5.1325 12.8675 2 9 2C5.1325 2 2 5.1325 2 9C2 12.8675 5.1325 16 9 16C10.8956 16 12.6146 15.2475 13.8748 14.0247L14.0247 13.8748Z"
-                fill="white"
-              />
-            </svg>
-          </div>
-          <div className={styles.navElement}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M20 17H22V19H2V17H4V10C4 5.58172 7.58172 2 12 2C16.4183 2 20 5.58172 20 10V17ZM18 17V10C18 6.68629 15.3137 4 12 4C8.68629 4 6 6.68629 6 10V17H18ZM9 21H15V23H9V21Z"
-                fill="white"
-              />
-            </svg>
-          </div>
-          <div className={styles.navElement}>
-            {session.data ? (
-              <Dropdown>
-                <DropdownTrigger>
-                  <h1>TEst</h1>
-                </DropdownTrigger>
-                <DropdownMenu aria-label="Dynamic Actions" items={items}>
-                  <DropdownItem>
-                    <Button onClick={signOut}>Sign out</Button>
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            ) : (
-              <Link href="/auth/login">
-                <Button>Login</Button>
+        <NavbarMenu className="z-50">
+          {menuItems.map((item, index) => (
+            <NavbarMenuItem className="text-center" onClick={handleOpen} key={`${item}-${index}`}>
+              <Link className="w-full" href={item.href}>
+                {item.title}
               </Link>
-            )}
-            {/* <SignOut /> */}
-          </div>
-        </div>
-      </div>
-    </>
+            </NavbarMenuItem>
+          ))}
+        </NavbarMenu>
+      </NavbarContent>
+    </Navbar>
   );
 };
 

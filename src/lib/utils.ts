@@ -21,8 +21,28 @@ export async function fetcher<T>({ url, options }: { url: string; options?: obje
       return new NextResponse('Failed to fetch data', { status: 500 });
     }
     const data = (await res.json()) as T;
+
     return data;
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 });
   }
+}
+export function replaceRange({
+  s,
+  start,
+  end,
+  substitute,
+}: {
+  s: string;
+  start: number;
+  end: number;
+  substitute: string;
+}) {
+  return s.substring(0, start) + substitute + s.substring(end);
+}
+export function mungeEmailAddress(s: string) {
+  const addressSign = s.indexOf('@');
+  const needReplaceEmailLength = s.slice(3, addressSign);
+  const menguEmail = s.slice(0, 3) + needReplaceEmailLength.replace(/./g, '*') + s.slice(addressSign);
+  return menguEmail;
 }
