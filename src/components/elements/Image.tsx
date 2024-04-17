@@ -9,8 +9,6 @@ export interface ImageProps extends Omit<UseImageProps, 'ref' | 'isBlurred' | 'a
 
 const Image = forwardRef<React.ElementRef<typeof NextuiImage>, ImageProps>(({ loader, ...props }, ref) => {
   const [isLoading, setIsLoading] = useState(true);
-  const loaderUrlImage =
-    loader || (process.env.NODE_ENV === 'development' ? '/api/image' : window.process.env.IMAGE_PROXY);
   return (
     <NextuiImage
       ref={ref}
