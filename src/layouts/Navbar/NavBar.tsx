@@ -1,4 +1,5 @@
 'use client';
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
@@ -16,7 +17,8 @@ import {
   User,
 } from '@nextui-org/react';
 import { SunIcon, MoonIcon } from '@radix-ui/react-icons';
-import { signOut } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 
 import {
   DropdownMenu,
@@ -32,10 +34,10 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown';
-import { useSession } from 'next-auth/react';
-import { usePathname } from 'next/navigation';
 import Logo from '~/components/ui/logo';
-import Search from '~/components/elements/Search';
+const Search = dynamic(() => import('~/components/elements/Search'), {
+  ssr: false,
+});
 
 const NavBar = () => {
   const { theme, setTheme } = useTheme();
@@ -74,10 +76,6 @@ const NavBar = () => {
   const handleOpen = () => {
     setToggle((p) => !p);
   };
-
-  // const signOut = () => {
-  //   logout();
-  // };
 
   return (
     <Navbar

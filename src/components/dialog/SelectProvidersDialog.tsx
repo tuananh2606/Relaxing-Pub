@@ -5,7 +5,7 @@ import type { Provider } from '~/services/providers.server';
 import { DialogHeader, DialogTitle } from '../elements/Dialog';
 
 interface ISelectProvidersDialog {
-  id: string;
+  id: number;
   visible: boolean;
   setIsOpenProviderModal: Dispatch<SetStateAction<boolean>>;
   setIsPlaying?: Dispatch<SetStateAction<boolean>>;
@@ -92,13 +92,12 @@ const SelectProvidersDialog = (props: ISelectProvidersDialog) => {
 
   const closePreviewModal = useCallback(() => {
     setIsOpenProviderModal(false);
-    //setIsPlaying(true);
   }, []);
 
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Select Provider</DialogTitle>
+        <DialogTitle className="text-center">Select Provider</DialogTitle>
       </DialogHeader>
       <div className="mt-4 flex w-full flex-col items-center justify-center">
         {provider && Array.isArray(provider)
