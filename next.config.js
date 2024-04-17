@@ -11,20 +11,7 @@ const nextConfig = {
     return config;
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'image.tmdb.org',
-        port: '',
-        pathname: '**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'themoviedb.org',
-        port: '',
-        pathname: '**',
-      },
-    ],
+    domains: ['image.tmdb.org', 'themoviedb.org'],
   },
 };
 

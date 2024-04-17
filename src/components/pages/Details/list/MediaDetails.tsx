@@ -13,6 +13,9 @@ import { TMDB } from '~/services/tmdb/utils.server';
 import tinycolor from 'tinycolor2';
 import Overview from '../item/Overview';
 import MediaCarousel from './MediaCarousel';
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog';
+import { SelectProvidersDialog } from '~/components/dialog';
+import { getInfoWithProvider } from '~/services/tmdb/tmdb.server';
 
 interface IMediaDetails {
   data: {
@@ -34,21 +37,30 @@ export const MediaDetails = (props: IMediaDetails) => {
     data: { mediaDetails, credits, recommendations },
     color,
   } = props;
+
   const params = useParams<{ type: string }>();
+  const [isOpenProviderModal, setShowProviderModal] = useState<boolean>(false);
   const [colorPalette, setColorPalette] = useState<ColorPalette>();
+  const [mediaId, setMediaId] = useState<string>();
+
   const titleOrig =
     (mediaDetails as IMovieDetail)?.original_title || (mediaDetails as ITvShowDetail)?.original_name || '';
+  const { status } = mediaDetails as IMovieDetail | ITvShowDetail;
   const titleEng = (mediaDetails as IMovieDetail)?.title || (mediaDetails as ITvShowDetail)?.name || '';
   const posterPath = TMDB?.posterUrl((mediaDetails as IMovieDetail | ITvShowDetail)?.poster_path!, 'w342');
   const backdropPath = TMDB?.backdropUrl((mediaDetails as IMovieDetail | ITvShowDetail)?.backdrop_path!, 'w1280');
   const runtime = (mediaDetails as IMovieDetail)?.runtime!;
   const episodes = (mediaDetails as ITvShowDetail)?.number_of_episodes!;
   const seasons = (mediaDetails as ITvShowDetail)?.number_of_seasons!;
+  const title = (mediaDetails as IMovieDetail)?.title || (mediaDetails as ITvShowDetail)?.name || '';
+  const orgTitle =
+    (mediaDetails as IMovieDetail)?.original_title || (mediaDetails as ITvShowDetail)?.original_name || '';
+  const tmdbId = (mediaDetails as IMovieDetail | ITvShowDetail)?.id;
+
   const releaseYear = new Date(
     (mediaDetails as IMovieDetail)?.release_date || (mediaDetails as ITvShowDetail)?.first_air_date || '',
-  )
-    .getFullYear()
-    .toString();
+  ).getFullYear();
+
   const directors =
     credits &&
     credits.crew &&
@@ -65,17 +77,29 @@ export const MediaDetails = (props: IMediaDetails) => {
           .toString();
   }, [brightnessColor, color]);
 
+  const openProviderModalHandle = () => {
+    setShowProviderModal((prev) => !prev);
+  };
+
   useEffect(() => {
+    const mediaInfoData = getInfoWithProvider(mediaDetails!.id as any, params.type as any);
     const getColorsPallete = async () => {
       if (color?.startsWith('#')) {
         const res = await fetcher({
           url: `/api/colors-palette?color=${backgroundColor!.replace('#', '')}`,
         });
-        setColorPalette(res.color);
+        return res;
       }
     };
-    getColorsPallete();
-  }, [backgroundColor, color]);
+    const getColorsPalleteData = getColorsPallete();
+    const fetchData = async () => {
+      const [colorsPallete, mediaInfo] = await Promise.all([getColorsPalleteData, mediaInfoData]);
+      setMediaId(mediaInfo!.id);
+      setColorPalette(colorsPallete.color);
+    };
+
+    fetchData();
+  }, [backgroundColor, color, mediaDetails, params.type]);
 
   return (
     <main className="min-h-screen">
@@ -161,9 +185,36 @@ export const MediaDetails = (props: IMediaDetails) => {
               </div>
             </div>
             <div className="z-10 grid-in-buttons">
-              <Button size="lg" className="w-full bg-[#ED213A] bg-gradient-to-r from-[#ED213A] to-[#93291E] md:w-auto">
-                Watch Now
-              </Button>
+              <div className="actions-btn mt-[1.5vw] flex items-center">
+                {(mediaDetails?.status === 'Released' ||
+                  mediaDetails?.status === 'Ended' ||
+                  mediaDetails?.status === 'Returning Series') && (
+                  <Dialog open={isOpenProviderModal} onOpenChange={openProviderModalHandle}>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="lg"
+                        className="w-full bg-[#ED213A] bg-gradient-to-r from-[#ED213A] to-[#93291E] md:w-auto"
+                      >
+                        Watch Now
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-80">
+                      <SelectProvidersDialog
+                        id={mediaDetails!.id as number}
+                        visible={isOpenProviderModal}
+                        setIsOpenProviderModal={setShowProviderModal}
+                        type={params.type as any}
+                        title={title}
+                        origTitle={orgTitle}
+                        year={releaseYear}
+                        tmdbId={tmdbId}
+                        {...(params.type === 'tv' && { season: 1, episode: 1, isEnded: status === 'Ended' })}
+                        {...(params.type === 'movie' && { isEnded: status === 'Released' })}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </div>
             </div>
           </div>
         </div>

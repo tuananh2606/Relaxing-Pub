@@ -1,20 +1,18 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { IAnimeInfo, IMovieInfo } from '@consumet/extensions';
 import Link from 'next/link';
 import { Button, Card, CardBody, CardHeader, Chip, Image as NextUIImage } from '@nextui-org/react';
-import Image from 'next/image';
+import Image from '~/components/elements/Image';
 import { Swiper as SwiperReact, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Scrollbar, A11y, Autoplay, Thumbs } from 'swiper/modules';
+import { Navigation, Autoplay, Thumbs } from 'swiper/modules';
 import type Swiper from 'swiper';
-import { tv } from 'tailwind-variants';
-import { AnimatePresence, motion, useMotionTemplate, useMotionValue } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useMeasure, useMediaQuery } from '@react-hookz/web';
 import { useRouter } from 'next-nprogress-bar';
 
 import { IVideos, ICredit, IMovieDetail, ITvShowDetail, IMediaList } from '~/services/tmdb/tmdb.types';
 import { IMedia } from '~/types/media';
-import { TMDB } from '~/services/tmdb/utils.server';
 import AspectRatio from '~/components/shared/AspectRatio';
 import 'swiper/css';
 import 'swiper/css/thumbs';
@@ -24,11 +22,6 @@ import { Carousel, CarouselItem } from '~/components/elements/Carousel';
 interface IHeroSection {
   data: IMediaList;
   items: {
-    videos: IVideos | undefined;
-    media: IMedia | undefined;
-    mediaInfo: IMovieInfo | IAnimeInfo | undefined;
-    credits: ICredit | undefined;
-    details: IMovieDetail | ITvShowDetail | undefined;
     listGenresTv: { [id: string]: string };
     listGenresMovie: { [id: string]: string };
   };
@@ -38,21 +31,9 @@ const HeroSection = ({ items, data }: IHeroSection) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<Swiper | null>(null);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const router = useRouter();
-  const { videos, media, mediaInfo, credits, details, listGenresTv, listGenresMovie } = items;
+  const { listGenresTv, listGenresMovie } = items;
   const { results } = data;
 
-  const { status } = details as IMovieDetail | ITvShowDetail;
-  const id = (mediaInfo as IMovieInfo | IAnimeInfo)?.episodeId;
-  const title = (details as IMovieDetail)?.title || (details as ITvShowDetail)?.name || '';
-  const type = (media as IMedia)?.mediaType || '';
-  const orgTitle = (details as IMovieDetail)?.original_title || (details as ITvShowDetail)?.original_name || '';
-  const backdropPath = TMDB?.backdropUrl((details as IMovieDetail | ITvShowDetail)?.backdrop_path!);
-  const genres = (details as IMovieDetail | ITvShowDetail)?.genres;
-
-  const releaseYear = new Date(
-    (details as IMovieDetail)?.release_date ?? ((details as ITvShowDetail)?.first_air_date || ''),
-  ).getFullYear();
-  const tmdbId = (details as IMovieDetail | ITvShowDetail)?.id;
   const [size, bannerRef] = useMeasure<HTMLDivElement>();
 
   const isMd = useMediaQuery('(max-width: 960px)', { initializeWithValue: false });
@@ -68,32 +49,6 @@ const HeroSection = ({ items, data }: IHeroSection) => {
 
   return (
     <>
-      {/* <div className="absolute bottom-0 left-0 z-10 -translate-y-32">
-          <Carousel<IMedia>
-            classNames={{
-              control: 'hidden md:flex',
-              carouselWrapper: 'no-scrollbar gap-2',
-            }}
-            items={data?.results}
-            renderItem={({ item, isSnapPoint, idx }) => (
-              <CarouselItem className="basis-[270px]" key={idx} isSnapPoint={isSnapPoint}>
-                <NextUIImage
-                  as={Image}
-                  alt="Anh"
-                  width={0}
-                  height={0}
-                  src={item.backdropPath || ''}
-                  draggable="false"
-                  sizes="100vw"
-                  className="h-full w-full rounded-lg object-cover"
-                  classNames={{
-                    wrapper: '!max-w-full !h-[140px]',
-                  }}
-                />
-              </CarouselItem>
-            )}
-          />
-        </div> */}
       {isMd ? (
         <div className="relative h-auto">
           <AspectRatio ratio={16 / 9}>
@@ -103,7 +58,7 @@ const HeroSection = ({ items, data }: IHeroSection) => {
                 carouselWrapper: 'no-scrollbar',
               }}
               navigation={false}
-              items={data?.results}
+              items={data?.results?.slice(0, 10)}
               renderItem={({ item, isSnapPoint, idx }) => (
                 <CarouselItem key={idx} className="h-full w-full !snap-center px-2" isSnapPoint={isSnapPoint}>
                   <Card className="h-full w-full">
@@ -133,16 +88,15 @@ const HeroSection = ({ items, data }: IHeroSection) => {
                       </div>
                     </CardHeader>
                     <CardBody className="p-0">
-                      <NextUIImage
-                        as={Image}
+                      <Image
                         alt="Anh"
                         src={item.backdropPath || ''}
                         width={0}
                         height={0}
-                        priority
+                        fallbackSrc="placeholder-gray.jpg"
                         sizes="100vw"
+                        priority
                         draggable="false"
-                        fallbackSrc="https://via.placeholder.com/300x200"
                         className="h-auto w-full object-cover"
                         classNames={{
                           wrapper: '!max-w-none',
@@ -155,7 +109,9 @@ const HeroSection = ({ items, data }: IHeroSection) => {
             />
           </AspectRatio>
         </div>
-      ) : (
+      ) : null}
+
+      {!isMd ? (
         <>
           <SwiperReact
             centeredSlides
@@ -176,7 +132,7 @@ const HeroSection = ({ items, data }: IHeroSection) => {
                 <SwiperSlide key={idx} className="relative">
                   {({ isActive }) => (
                     <AspectRatio ratio={16 / 8} ref={bannerRef}>
-                      <Card className="h-full w-full border-0">
+                      <Card className="h-full w-full rounded-none border-0">
                         <CardHeader className="absolute z-30 flex h-full flex-row items-center justify-start gap-5 md:gap-7 lg:gap-9 xl:justify-center">
                           <div className="relative h-full w-full">
                             <div className="absolute bottom-0 left-0 h-1/2 w-full md:h-full">
@@ -276,28 +232,6 @@ const HeroSection = ({ items, data }: IHeroSection) => {
                                     </motion.div>
                                   </div>
                                 </div>
-                                <div className="grid h-full w-3/6 place-content-center p-10 ">
-                                  <motion.div
-                                    className="hidden lg:block"
-                                    animate={isActive ? 'inView' : 'outView'}
-                                    transition={{ duration: 0.8, ease: 'easeInOut' }}
-                                    variants={{
-                                      inView: { opacity: 1, scale: 1, x: 0 },
-                                      outView: { opacity: 0, scale: 0, x: 0 },
-                                    }}
-                                  >
-                                    <NextUIImage
-                                      as={Image}
-                                      alt={`${item.name || item.title} Poster Image`}
-                                      className="aspect-[2/3] h-auto w-full object-cover"
-                                      priority={idx === 0}
-                                      width={342}
-                                      height={513}
-                                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                      src={item.posterPath!}
-                                    />
-                                  </motion.div>
-                                </div>
                               </div>
                             </div>
                           </div>
@@ -312,15 +246,15 @@ const HeroSection = ({ items, data }: IHeroSection) => {
                               transition={{ duration: 0.8, ease: 'easeIn' }}
                               style={{ overflow: 'hidden' }}
                             >
-                              <NextUIImage
-                                as={Image}
+                              <Image
                                 src={item.backdropPath!}
                                 width={0}
                                 height={0}
+                                priority={idx === 0}
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                className="h-auto w-full object-cover !opacity-90 lg:!opacity-30"
+                                className="h-auto w-full rounded-none object-cover !opacity-90"
                                 classNames={{
-                                  wrapper: '!max-w-none',
+                                  wrapper: '!max-w-none !rounded-none',
                                 }}
                                 alt={`${item.name || item.title} Backdrop Image`}
                               />
@@ -357,7 +291,7 @@ const HeroSection = ({ items, data }: IHeroSection) => {
                     src={item.backdropPath!}
                     width={0}
                     height={0}
-                    priority
+                    priority={idx < 6}
                     sizes="100vw"
                     className="h-auto min-h-[135px] w-full min-w-[240px] object-cover"
                     alt={`${(item!.title as string) || (item!.name as string)} Backdrop Image`}
@@ -366,7 +300,7 @@ const HeroSection = ({ items, data }: IHeroSection) => {
               ))}
           </SwiperReact>
         </>
-      )}
+      ) : null}
     </>
   );
 };

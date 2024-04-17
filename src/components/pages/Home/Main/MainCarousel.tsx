@@ -1,8 +1,8 @@
 'use client';
 import React, { useState } from 'react';
-import Image from 'next/image';
-import { Card, CardBody, CardFooter, Image as NextUIImage } from '@nextui-org/react';
+import { Card, CardBody, CardFooter } from '@nextui-org/react';
 
+import Image from '~/components/elements/Image';
 import { IMedia } from '~/types/media';
 import { PreviewModal } from '~/components/dialog';
 import { Dialog, DialogContent, DialogTrigger } from '~/components/elements/Dialog';
@@ -51,15 +51,13 @@ const MainCarousel = ({ items, title, to }: Props) => {
               >
                 <Card isHoverable>
                   <CardBody className="p-0">
-                    <NextUIImage
-                      as={Image}
+                    <Image
                       alt="Anh"
-                      src={item.posterPath}
+                      src={item.posterPath!}
                       width={0}
                       height={0}
                       draggable="false"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      fallbackSrc="/placeholder-gray.jpg"
                       className="h-auto !max-h-[299px] w-full rounded-lg object-cover"
                       classNames={{
                         wrapper: '!max-w-none',
@@ -95,7 +93,7 @@ const MainCarousel = ({ items, title, to }: Props) => {
           )}
         />
       </div>
-      <DialogContent className="absolute top-8 z-50 w-11/12 max-w-[850px] rounded-lg !p-0 md:w-4/5">
+      <DialogContent className="absolute top-[var(--navbar-height)] z-50 w-11/12 max-w-[850px] rounded-lg !p-0 md:w-4/5">
         <PreviewModal media={media} />
       </DialogContent>
     </Dialog>
