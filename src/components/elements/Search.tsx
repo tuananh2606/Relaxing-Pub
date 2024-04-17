@@ -91,6 +91,7 @@ const Search = () => {
             inputWrapper: 'h-10 pl-0',
           },
         }}
+        allowsEmptyCollection
         listboxProps={{
           hideSelectedIcon: true,
           itemClasses: {
