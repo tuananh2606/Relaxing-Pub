@@ -36,7 +36,7 @@ import {
 } from '~/components/ui/dropdown';
 import Logo from '~/components/ui/logo';
 const Search = dynamic(() => import('~/components/elements/Search'), {
-  ssr: false,
+  suspense: true,
 });
 
 const NavBar = () => {
