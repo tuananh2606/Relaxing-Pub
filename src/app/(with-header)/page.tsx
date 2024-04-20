@@ -25,7 +25,7 @@ export default async function Home() {
   return (
     <main className="my-16 lg:mt-0">
       <HeroSection items={data} data={trending} />
-      <div className="mt-4 space-y-8">
+      <div className="space-y-8">
         <MainCarousel key="trending" title="Trending" items={trending} to="/trending" />
         <MainCarousel key="latestMovies" title="Latest Movies" items={latestMovies} to="/lastest-movie" />
         <MainCarousel key="latestTvShows" title="Latest TvShows" items={latestTvShows} to="/" />

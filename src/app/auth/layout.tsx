@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Logo from '~/components/ui/logo';
-import '~/app/globals.css';
+import '~/app/globals.scss';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
