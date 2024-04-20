@@ -1,4 +1,4 @@
-import './globals.css';
+import './globals.scss';
 import { Inter } from 'next/font/google';
 import { SessionProvider, ProviderNextUi, ProviderTopLoader } from '~/components/providers';
 import { Metadata, Viewport } from 'next';

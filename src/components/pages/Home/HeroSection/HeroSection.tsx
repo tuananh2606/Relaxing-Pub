@@ -1,6 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { IAnimeInfo, IMovieInfo } from '@consumet/extensions';
+import { useState, useEffect, MouseEvent, useRef } from 'react';
 import Link from 'next/link';
 import { Button, Card, CardBody, CardHeader, Chip, Image as NextUIImage } from '@nextui-org/react';
 import Image from '~/components/elements/Image';
@@ -8,9 +7,11 @@ import { Swiper as SwiperReact, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay, Thumbs } from 'swiper/modules';
 import type Swiper from 'swiper';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useMeasure, useMediaQuery } from '@react-hookz/web';
+import { useMeasure, useMediaQuery, useWindowSize } from '@react-hookz/web';
 import { useRouter } from 'next-nprogress-bar';
+import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 
+import styles from './hero-video.module.scss';
 import { IVideos, ICredit, IMovieDetail, ITvShowDetail, IMediaList } from '~/services/tmdb/tmdb.types';
 import { IMedia } from '~/types/media';
 import AspectRatio from '~/components/shared/AspectRatio';
@@ -18,6 +19,7 @@ import 'swiper/css';
 import 'swiper/css/thumbs';
 import 'swiper/css/navigation';
 import { Carousel, CarouselItem } from '~/components/elements/Carousel';
+import { cn } from '~/lib/utils';
 
 interface IHeroSection {
   data: IMediaList;
@@ -33,14 +35,47 @@ const HeroSection = ({ items, data }: IHeroSection) => {
   const router = useRouter();
   const { listGenresTv, listGenresMovie } = items;
   const { results } = data;
+  const { width } = useWindowSize();
 
   const [size, bannerRef] = useMeasure<HTMLDivElement>();
+  const navigationPrevRef = useRef<HTMLDivElement>(null);
+  const navigationNextRef = useRef<HTMLDivElement>(null);
 
   const isMd = useMediaQuery('(max-width: 960px)', { initializeWithValue: false });
 
   const variants = {
     inView: { opacity: 1, x: 0 },
     outView: { opacity: 0, x: 40 },
+  };
+
+  const rightMouseOver = (e: MouseEvent<HTMLElement>) => {
+    if (e.currentTarget.classList.contains('right')) {
+      e.currentTarget.parentElement?.classList.add('is-right');
+    } else if (e.currentTarget.classList.contains('left')) {
+      e.currentTarget.parentElement?.classList.add('is-left');
+    }
+  };
+
+  const rightMouseOut = (e: MouseEvent<HTMLElement>) => {
+    e.currentTarget.parentElement?.classList.remove('is-right', 'is-left');
+  };
+
+  const insertPositionClassName = (index: number) => {
+    const i = index + 1;
+
+    if (i === 1) return 'left';
+    else if (i === 20) return 'right';
+
+    if (width >= 1378) {
+      if ([7, 13, 19].includes(i)) return 'left';
+      else if ([6, 12, 18].includes(i)) return 'right';
+    } else if (width >= 998) {
+      if ([5, 9, 13, 17].includes(i)) return 'left';
+      else if ([4, 8, 12, 16].includes(i)) return 'right';
+    } else if (width >= 768) {
+      if ([4, 7, 10, 13, 16].includes(i)) return 'left';
+      else if ([3, 6, 9, 12, 15, 18].includes(i)) return 'right';
+    }
   };
 
   useEffect(() => {
@@ -95,7 +130,7 @@ const HeroSection = ({ items, data }: IHeroSection) => {
                         height={0}
                         fallbackSrc="placeholder-gray.jpg"
                         sizes="100vw"
-                        priority
+                        priority={idx === 0}
                         draggable="false"
                         className="h-auto w-full object-cover"
                         classNames={{
@@ -118,10 +153,12 @@ const HeroSection = ({ items, data }: IHeroSection) => {
             spaceBetween={10}
             thumbs={{ swiper: thumbsSwiper, multipleActiveThumbs: false }}
             modules={[Thumbs, Autoplay]}
-            autoplay={{
-              delay: 8000,
-              disableOnInteraction: false,
-            }}
+            // autoplay={{
+            //   delay: 8000,
+            //   disableOnInteraction: false,
+            // }}
+            pagination
+            allowTouchMove
             onActiveIndexChange={(swiper) => {
               setActiveIndex(swiper.realIndex);
             }}
@@ -248,8 +285,8 @@ const HeroSection = ({ items, data }: IHeroSection) => {
                             >
                               <Image
                                 src={item.backdropPath!}
-                                width={0}
-                                height={0}
+                                width={1600}
+                                height={900}
                                 priority={idx === 0}
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 className="h-auto w-full rounded-none object-cover !opacity-90"
@@ -267,38 +304,81 @@ const HeroSection = ({ items, data }: IHeroSection) => {
                 </SwiperSlide>
               ))}
           </SwiperReact>
-          <SwiperReact
-            onSwiper={setThumbsSwiper}
-            grabCursor
-            spaceBetween={10}
-            slidesPerView="auto"
-            slidesPerGroup={1}
-            slidesPerGroupAuto
-            watchSlidesProgress
-            modules={[Navigation, Thumbs]}
-            className="absolute bottom-[60px] left-0 !hidden min-h-[150px] w-full xl:!block"
-          >
-            {results &&
-              results.length > 0 &&
-              results?.map((item, idx) => (
-                <SwiperSlide
-                  key={idx}
-                  className={`!h-[135px] !w-[240px] overflow-hidden rounded-xl border-4 opacity-100 transition-opacity duration-300 ease-out ${
-                    activeIndex === idx ? 'border-primary' : 'border-transparent hover:border-primary/70'
-                  }`}
-                >
-                  <Image
-                    src={item.backdropPath!}
-                    width={0}
-                    height={0}
-                    priority={idx < 6}
-                    sizes="100vw"
-                    className="h-auto min-h-[135px] w-full min-w-[240px] object-cover"
-                    alt={`${(item!.title as string) || (item!.name as string)} Backdrop Image`}
-                  />
-                </SwiperSlide>
-              ))}
-          </SwiperReact>
+          <div className="relative bottom-[80px] left-0 flex [&_.swiper-button-disabled]:opacity-20">
+            <div
+              className="absolute left-0 top-0 z-20 flex h-full w-[4%] items-center justify-center bg-[#10101180]"
+              ref={navigationPrevRef}
+            >
+              <button className="scale scale-90 text-foreground opacity-0 transition-transform-opacity hover:scale-125 hover:opacity-100">
+                <MdChevronLeft size="3em" style={{ color: 'white' }} />
+              </button>
+            </div>
+            <div
+              className="absolute right-0 top-0 z-20 flex h-full w-[4%] items-center justify-center bg-[#10101180]"
+              ref={navigationNextRef}
+            >
+              <button className="scale scale-90 text-foreground opacity-0 transition-transform-opacity hover:scale-125 hover:opacity-100">
+                <MdChevronRight size="3em" style={{ color: 'white' }} />
+              </button>
+            </div>
+            <SwiperReact
+              onSwiper={setThumbsSwiper}
+              grabCursor
+              spaceBetween={10}
+              slidesPerView="auto"
+              slidesPerGroup={1}
+              slidesPerGroupAuto
+              navigation={{
+                prevEl: navigationPrevRef.current,
+                nextEl: navigationNextRef.current,
+              }}
+              watchSlidesProgress
+              modules={[Navigation, Thumbs]}
+              onBeforeInit={(swiper: Swiper) => {
+                // @ts-ignore
+                // eslint-disable-next-line no-param-reassign
+                swiper.params.navigation.prevEl = navigationPrevRef.current;
+                // @ts-ignore
+                // eslint-disable-next-line no-param-reassign
+                swiper.params.navigation.nextEl = navigationNextRef.current;
+              }}
+              injectStyles={[
+                `.swiper-wrapper {
+                  background-color: red;
+                }`,
+              ]}
+              className="group h-full min-h-[143px] w-full [&_.swiper-slide]:hover:translate-x-[-15%] [&_.swiper-wrapper]:py-5"
+            >
+              {results &&
+                results.length > 0 &&
+                results?.map((item, idx) => (
+                  <SwiperSlide
+                    key={idx}
+                    onMouseOver={rightMouseOver}
+                    onMouseOut={rightMouseOut}
+                    className={cn(
+                      '!h-full !w-[240px] overflow-hidden rounded-xl border-4 transition-transform duration-300 ease-out hover:z-20 hover:!translate-x-0 hover:scale-125 hover:!opacity-100 group-hover:opacity-30',
+                      activeIndex === idx ? 'border-primary' : 'border-transparent hover:border-primary/70',
+                      styles.swiperSlide,
+                      insertPositionClassName(idx),
+                    )}
+                  >
+                    <Image
+                      src={item.backdropPath!}
+                      width={1600}
+                      height={900}
+                      priority={idx < 6}
+                      sizes="100vw"
+                      className="h-auto w-full min-w-[240px] rounded-none object-cover"
+                      classNames={{
+                        wrapper: 'rounded-xl',
+                      }}
+                      alt={`${(item!.title as string) || (item!.name as string)} Backdrop Image`}
+                    />
+                  </SwiperSlide>
+                ))}
+            </SwiperReact>
+          </div>
         </>
       ) : null}
     </>

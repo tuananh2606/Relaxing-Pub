@@ -11,7 +11,16 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: ['image.tmdb.org', 'themoviedb.org'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'image.tmdb.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'themoviedb.org',
+      },
+    ],
   },
 };
 
