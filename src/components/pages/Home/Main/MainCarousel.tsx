@@ -8,7 +8,6 @@ import { PreviewModal } from '~/components/dialog';
 import { Dialog, DialogContent, DialogTrigger } from '~/components/elements/Dialog';
 import { Carousel, CarouselItem } from '~/components/elements/Carousel';
 import { IMediaList } from '~/services/tmdb/tmdb.types';
-import HoverCard from '~/components/elements/HoverCard';
 
 type Props = {
   items: IMediaList | undefined;
@@ -69,31 +68,12 @@ const MainCarousel = ({ items, title, to }: Props) => {
                     <h3 className="mx-2 line-clamp-2 text-foreground">{item?.title as string}</h3>
                   </CardFooter>
                 </Card>
-
-                {/* <HoverCard key={idx} item={item} /> */}
-                {/* <NextUIImage
-                  as={Image}
-                  alt="Anh"
-                  src={item.posterPath || ''}
-                  width={0}
-                  height={0}
-                  draggable="false"
-                  priority={idx === 0}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  fallbackSrc="/placeholder-gray.jpg"
-                  className="h-full w-full rounded-lg object-cover"
-                  classNames={{
-                    wrapper: '!max-w-full !max-h-[299px]',
-                    img: 'aspect-[2/3]',
-                  }}
-                />
-                <h3 className="m-2 line-clamp-1 text-foreground">{item?.title as string}</h3> */}
               </CarouselItem>
             </DialogTrigger>
           )}
         />
       </div>
-      <DialogContent className="absolute top-[var(--navbar-height)] z-50 w-11/12 max-w-[850px] rounded-lg !p-0 md:w-4/5">
+      <DialogContent className="absolute top-[var(--navbar-height)] z-50 w-11/12 max-w-[850px] animate-scale-in-center rounded-lg !p-0 md:w-4/5">
         <PreviewModal media={media} />
       </DialogContent>
     </Dialog>
