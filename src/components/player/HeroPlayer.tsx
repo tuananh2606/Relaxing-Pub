@@ -3,7 +3,6 @@ import ReactPlayer from 'react-player/lazy';
 
 import { VideoSkeleton } from '../ui/Skeleton';
 import AspectRatio from '../shared/AspectRatio';
-import ImageWithFallback from '../shared/ImageWithFallback';
 
 interface IHeroPlayer {
   url: string;
@@ -41,14 +40,7 @@ const HeroPlayer = ({ isMuted, url, playing, backdropPath }: IHeroPlayer) => {
             },
           }}
         />
-      ) : (
-        <ImageWithFallback
-          src={backdropPath}
-          fill={true}
-          alt={'Backdrop Image'}
-          className="xl:!h-[100lvh] xl:!w-[100lvw]"
-        />
-      )}
+      ) : null}
     </AspectRatio>
   );
 };
