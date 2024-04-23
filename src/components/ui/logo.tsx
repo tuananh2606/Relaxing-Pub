@@ -9,7 +9,7 @@ interface ILogo {
 const Logo = ({ className, ...props }: ILogo) => {
   return (
     <>
-      <Lottie animationData={likeAnimation} loop={false} className={cn('-mt-[10px] size-16', className)} />
+      <Lottie animationData={likeAnimation} loop={false} className={cn('-mt-[10px] size-12 md:size-16', className)} />
       <span className="font-semibold">FILMPUB</span>
     </>
   );
