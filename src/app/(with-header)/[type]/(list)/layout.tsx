@@ -15,8 +15,8 @@ const movieNav = [
     href: '/movie/upcoming',
   },
   {
-    name: 'Tasks',
-    href: '/examples/tasks',
+    name: 'Now Playing',
+    href: '/movie/now-playing',
   },
 ];
 

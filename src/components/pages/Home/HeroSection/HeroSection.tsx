@@ -1,8 +1,7 @@
 'use client';
 import { useState, useEffect, MouseEvent, useRef } from 'react';
 import Link from 'next/link';
-import { Button, Card, CardBody, CardHeader, Chip, Image as NextUIImage } from '@nextui-org/react';
-import Image from '~/components/elements/Image';
+import { Button, Card, CardBody, CardHeader, Chip } from '@nextui-org/react';
 import { Swiper as SwiperReact, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay, Thumbs } from 'swiper/modules';
 import type Swiper from 'swiper';
@@ -11,8 +10,9 @@ import { useMeasure, useMediaQuery, useWindowSize } from '@react-hookz/web';
 import { useRouter } from 'next-nprogress-bar';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 
+import Image from '~/components/elements/Image';
 import styles from './hero-video.module.scss';
-import { IVideos, ICredit, IMovieDetail, ITvShowDetail, IMediaList } from '~/services/tmdb/tmdb.types';
+import { IMediaList } from '~/services/tmdb/tmdb.types';
 import { IMedia } from '~/types/media';
 import AspectRatio from '~/components/shared/AspectRatio';
 import 'swiper/css';

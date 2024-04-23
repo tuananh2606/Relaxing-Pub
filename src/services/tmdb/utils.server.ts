@@ -45,6 +45,15 @@ export class TMDB {
     return url;
   };
 
+  static nowPlayingUrl = (mediaType: MediaType, page?: number, language?: string): string => {
+    let url = `${this.API_BASE_URL}/movie/now_playing?api_key=${this.key}`;
+
+    if (language) url += `&language=${language}`;
+    if (page) url += `&page=${page}`;
+
+    return url;
+  };
+
   static topRatedUrl = (mediaType: MediaType, page?: number, language?: string): string => {
     let url = `${this.API_BASE_URL}/${mediaType}/top_rated?api_key=${this.key}`;
 

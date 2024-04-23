@@ -94,7 +94,7 @@ export const MediaDetails = (props: IMediaDetails) => {
     const getColorsPalleteData = getColorsPallete();
     const fetchData = async () => {
       const [colorsPallete, mediaInfo] = await Promise.all([getColorsPalleteData, mediaInfoData]);
-      setMediaId(mediaInfo!.id);
+      setMediaId(mediaInfo?.id);
       setColorPalette(colorsPallete.color);
     };
 
