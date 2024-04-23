@@ -35,9 +35,7 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown';
 import Logo from '~/components/ui/logo';
-const Search = dynamic(() => import('~/components/elements/Search'), {
-  suspense: true,
-});
+import Search from '~/components/elements/Search';
 
 const NavBar = () => {
   const { theme, setTheme } = useTheme();
